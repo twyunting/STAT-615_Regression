@@ -1,0 +1,19 @@
+---
+title: "Lab 1"
+author: "Yunting Chiu"
+date: "1/21/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+USpop <- read_csv("./data/USpop.csv")
+USpop
+presidents <- read_csv("./data/presidents.csv")
+presidents
+```
+
