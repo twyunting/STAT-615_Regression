@@ -22,16 +22,18 @@ regr = lm(Population ~ Year) # lm(y~x)
 abline(regr, col="red", lwd=3) #fit a linear regression line
 
 ```
+
 - According to the above plot, some outliers can be found at the right top, these observations can be defined as potential outliers, and the population does not grow linearly. We are therefore considering changing another model for this study case. 
 
 ```{r}
 predict(regr, data.frame(Year=2020))
 summary(regr)
 ```
+
 - With a small p-value, the summary of current simple linear model is indicates intercept and slope (Year) are reject the null hypothesis. Also, the Multiple R-squared is 91.93 % of the total variation (greater than 50 %). If we only focus on the result of R-squared, which is a good model, but the prerequisite is that we need to check the plot of x and y variables whether they are linear.
 
 
-# quadratic model
+### Quadratic model
 - We consider changing a `Year` variable to the quadratic transformation. That is, we need a quadratic term in our model.
 ```{r}
 quad <- lm(Population ~ poly(Year,2))
@@ -44,11 +46,14 @@ plot(Year,Population)
 abline(regr, col="red", lwd = 3) #fit a linear regression line
 lines(Year, Yhat, col = "blue", lwd = 3)
 ```
+
 - Firstly, we saw 99.9% of the total variation in this model. Secondly, The `Yhat` is quadratic polynomial of the `Year` from 1790 to 2010. Based on the plot above, it is obvious that the blue curve fits the data points better, meaning that the quadratic model predicts the US population better than the linear model.
 
 ```{r}
 predict(quad, data.frame(Year=c(2020,2030,2040)))
 ```
+
+
 
 # Example 2: US Presidents
 ```{r}
@@ -56,18 +61,26 @@ predict(quad, data.frame(Year=c(2020,2030,2040)))
 pres <- read_csv("./data/presidents.csv")
 pres
 ```
+### Plot
+```{r}
+attach(pres)
+plot(expected, actual, lwd=3)
+```
+
+- If the president's position does not interfere with the life expectancy, the points should be `actual` equal to `expected`. 
 
 ```{r}
+# add abline and run again
 attach(pres)
 plot(expected, actual, lwd=3)
 reg = lm(actual ~ expected) 
 abline(reg, col="red", lwd=3)
 Z = c(4,8,18)
-reg = lm(actual ~ expected, data=pres[-Z,])
+
+# remove outliers and fit linear regression
+reg = lm(actual ~ expected, data = pres[-Z,])
 summary(reg)
 ```
-- 
-```{r}
 
-```
-
+- The negative slope shows we have all overestimated their life expectancy. In this case, we may found out about some outliers, such as 4, 8, 18 observations. So we try to remove then and run the linear regression model.
+- In summary, the large p-value 0.997 indicates that we fail to reject the null hypothesis, which is not significant. Also, the slope is still negative that we did not find the slope is equal to zero, meaning that the `expected` variable cannot help to predict the President's life expectancy (`actual`).
