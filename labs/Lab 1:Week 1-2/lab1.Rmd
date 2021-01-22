@@ -1,5 +1,5 @@
 ---
-title: "Lab 1"
+title: "lab 1"
 author: "Yunting Chiu"
 date: "1/21/2021"
 output: pdf_document
@@ -8,12 +8,62 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
+# Example 1
 ```{r}
 library(tidyverse)
 USpop <- read_csv("./data/USpop.csv")
 USpop
-presidents <- read_csv("./data/presidents.csv")
-presidents
+pres <- read_csv("./data/presidents.csv")
+pres
+```
+```{r}
+attach(USpop) #replace %>%
+plot(Year,Population)
+regr = lm(Population ~ Year) # lm(y~x)
+
+abline(regr, col="red", lwd=3)
+#abline 
+```
+```{r}
+predict(regr, data.frame(Year=2020))
+summary(regr)
+```
+
+#quadratic model
+```{r}
+quad <- lm(Population ~ poly(Year,2))
+#aaa <- lm(Population ~ (Year*Year))
+summary(quad)
+#summary(aaa)
+```
+
+```{r}
+quad = lm(Population ~ poly(Year,2))
+summary(quad)
+Yhat = predict(quad)
+lines(Year, Yhat, col="blue", lwd=3)
+```
+
+```{r}
+predict(quad, data.frame(Year=c(2020,2030,2040)))
+```
+
+# Example 2
+```{r}
+pres
+```
+
+```{r}
+attach(pres)
+plot(expected, actual, lwd=3)
+reg = lm(actual ~ expected) 
+abline(reg, col="red", lwd=3)
+Z = c(4,8,18)
+reg = lm(actual ~ expected, data=pres[-Z,])
+summary(reg)
+```
+
+```{r}
+
 ```
 
