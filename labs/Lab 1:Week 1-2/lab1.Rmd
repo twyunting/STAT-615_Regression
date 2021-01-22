@@ -1,5 +1,5 @@
 ---
-title: "lab 1"
+title: "Lab 1"
 author: "Yunting Chiu"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -8,48 +8,52 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-# Example 1
+# Example 1: US population
 ```{r}
+# read a dataset
 library(tidyverse)
 USpop <- read_csv("./data/USpop.csv")
 USpop
-pres <- read_csv("./data/presidents.csv")
-pres
 ```
 ```{r}
-attach(USpop) #replace %>%
+attach(USpop) #replace %>% 
 plot(Year,Population)
 regr = lm(Population ~ Year) # lm(y~x)
+abline(regr, col="red", lwd=3) #fit a linear regression line
 
-abline(regr, col="red", lwd=3)
-#abline 
 ```
+- According to the above plot, some outliers can be found at the right top, these observations can be defined as potential outliers, and the population does not grow linearly. We are therefore considering changing another model for this study case. 
+
 ```{r}
 predict(regr, data.frame(Year=2020))
 summary(regr)
 ```
+- With a small p-value, the summary of current simple linear model is indicates intercept and slope (Year) are reject the null hypothesis. Also, the Multiple R-squared is 91.93 % of the total variation (greater than 50 %). If we only focus on the result of R-squared, which is a good model, but the prerequisite is that we need to check the plot of x and y variables whether they are linear.
 
-#quadratic model
+
+# quadratic model
+- We consider changing a `Year` variable to the quadratic transformation. That is, we need a quadratic term in our model.
 ```{r}
 quad <- lm(Population ~ poly(Year,2))
-#aaa <- lm(Population ~ (Year*Year))
 summary(quad)
-#summary(aaa)
-```
+Yhat <- predict(quad)
 
-```{r}
-quad = lm(Population ~ poly(Year,2))
-summary(quad)
-Yhat = predict(quad)
-lines(Year, Yhat, col="blue", lwd=3)
+# recall and compare it 
+attach(USpop)
+plot(Year,Population)
+abline(regr, col="red", lwd = 3) #fit a linear regression line
+lines(Year, Yhat, col = "blue", lwd = 3)
 ```
+- Firstly, we saw 99.9% of the total variation in this model. Secondly, The `Yhat` is quadratic polynomial of the `Year` from 1790 to 2010. Based on the plot above, it is obvious that the blue curve fits the data points better, meaning that the quadratic model predicts the US population better than the linear model.
 
 ```{r}
 predict(quad, data.frame(Year=c(2020,2030,2040)))
 ```
 
-# Example 2
+# Example 2: US Presidents
 ```{r}
+#read a dataset
+pres <- read_csv("./data/presidents.csv")
 pres
 ```
 
@@ -62,7 +66,7 @@ Z = c(4,8,18)
 reg = lm(actual ~ expected, data=pres[-Z,])
 summary(reg)
 ```
-
+- 
 ```{r}
 
 ```
