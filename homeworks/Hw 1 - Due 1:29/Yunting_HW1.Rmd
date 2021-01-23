@@ -15,7 +15,11 @@ When $\alpha$ is not given, use the p-value approach to make your conclusions. W
 1. The manufacturer of a certain brand of household light bulbs claims that the bulbs produced by his factory have an average life of at least 2,000 hours. The mean and standard deviation of 20 light bulbs selected from the manufacturer’s production process were calculated to be 2,160 and 142 hours, respectively.
 
 (a) Do the data represent sufficient evidence to support the manufacturer’s claim? How can you interpret your answer?
-- let we set H0: mu < 2000, and Ha: mu >= 2000. Note, this is a one-sided t.test with $\alpha$ = 0.05, and degree of freedom = n-1 = 20-1 = 19.
+
+- Let we set H0: mu < 2000, and Ha: mu >= 2000. Note, this is a one-sided t.test with $\alpha$ = 0.05, and degree of freedom: n-1 = 20-1 = 19. According to the information given, the sample mean is 2160, and the sample standard deviation is 142. We use t-statistics to conduct the statistical inference.
+![](pics/IMG_AFA240978D45-1.jpeg)
+- The critical value for $\alpha$ = 0.05 at df = 19 is 1.729 according to the t-distribution table. As 5.05 > 1.729, so we reject the null and claim that we have sufficient evidence to support the manufacturer's claim with a 5 % probability that I am going to reject the null when it is true.
+
 
 
 (b) Construct a 95% confidence interval for the mean lifetime of household light bulbs.
