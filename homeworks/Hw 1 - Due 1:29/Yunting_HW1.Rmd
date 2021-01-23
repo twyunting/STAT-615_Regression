@@ -1,7 +1,7 @@
 ---
 title: "Homework #1"
 author: "Yunting Chiu"
-date: "1/22/2021"
+date: "`r Sys.Date()`"
 output: pdf_document
 ---
 
@@ -13,13 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 When $\alpha$ is not given, use the p-value approach to make your conclusions. When it’s difficult to conclude, use $\alpha$ = 0.05. For two-sample problems, use the F-test to decide which t-test to use.\
 
 1. The manufacturer of a certain brand of household light bulbs claims that the bulbs produced by his factory have an average life of at least 2,000 hours. The mean and standard deviation of 20 light bulbs selected from the manufacturer’s production process were calculated to be 2,160 and 142 hours, respectively.
-```{r}
-
-```
-
-
 
 (a) Do the data represent sufficient evidence to support the manufacturer’s claim? How can you interpret your answer?
+- let we set H0: mu < 2000, and Ha: mu >= 2000. Note, this is a one-sided t.test with $\alpha$ = 0.05, and degree of freedom = n-1 = 20-1 = 19.
+
+
 (b) Construct a 95% confidence interval for the mean lifetime of household light bulbs.
 
 ```{r}
