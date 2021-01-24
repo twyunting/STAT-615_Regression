@@ -42,16 +42,52 @@ The firm is interested in switching to the new process only if it can be demonst
 
 4. Micro-project. Data on 522 recent home sales are available on our Blackboard web site The following variables are included.\
 Use software to find out if there is significant evidence that:\
-(a) The sales price depends on the air conditioner in the house.\
-(b) On the average, homes with an air conditioner are more expensive.\
-(c) On the average, homes with an air conditioner are larger.\
-(d) The sales price depends on the proximity to a highway.\
-(e) On the average, homes are cheaper when they are close to a highway.\
-(f) On the average, homes are cheaper when they are far from a highway.\
-
 ```{r}
 # read the dataset
 library(tidyverse)
 homeSales <- read_csv("./data/HOME_SALES(1).csv")
 homeSales 
 ```
+(a) The sales price depends on the air conditioner in the house.\
+- We set the houses with air conditioner as `1`, the houses without air conditioner as `0`. The small p-value indicates the sales price is significantly associated with air conditioner in the house.
+```{r}
+# mutate AIR_CONDITIONER as dummy variable
+homeSales %>%
+mutate(AIR_CONDITIONER = recode(AIR_CONDITIONER, "YES" = "1", "NO" = "0"),
+       AIR_CONDITIONER = as.double(AIR_CONDITIONER)) -> homeSales01
+       
+acPrice <- lm(SALES_PRICE ~ AIR_CONDITIONER, data = homeSales01) 
+summary(acPrice)
+```
+
+(b) On the average, homes with an air conditioner are more expensive.\
+- The model explains sales price of air conditioner homes is 106.22 thousand dollars more expensive than non-air conditioner homes, on average.
+
+(c) On the average, homes with an air conditioner are larger.\
+- According to linear model below, the homes is 3283 thousand dollars less than non-air conditioner homes, on average. And the small p-value 0.0161 points out we have sufficient evidence to reject the null.
+```{r}
+acSize <- lm(LOT_SIZE ~ AIR_CONDITIONER, data = homeSales01) 
+summary(acSize)
+```
+
+(d) The sales price depends on the proximity to a highway.\
+- With a large p-value of 0.245, we do not have sufficient evidence to conclude that the sales price and the highway have an association.
+```{r}
+# mutate HIGHWAY as dummy variable
+homeSales01 %>%
+mutate(HIGHWAY = recode(HIGHWAY, "YES" = "1", "NO" = "0"),
+       HIGHWAY = as.double(HIGHWAY)) -> homeSales02
+
+hwPrice <- lm(SALES_PRICE ~ HIGHWAY, data = homeSales02) 
+summary(hwPrice)
+  
+```
+
+(e) On the average, homes are cheaper when they are close to a highway.\
+```{r}
+
+```
+
+
+(f) On the average, homes are cheaper when they are far from a highway.\
+
