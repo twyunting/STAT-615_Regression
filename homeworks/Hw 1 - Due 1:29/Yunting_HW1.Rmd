@@ -17,9 +17,14 @@ When $\alpha$ is not given, use the p-value approach to make your conclusions. W
 (a) Do the data represent sufficient evidence to support the manufacturer’s claim? How can you interpret your answer?
 
 ![](pics/IMG_0CEA784B2359-1.jpeg)
-- Let we set H0: mu < 2000, and Ha: mu >= 2000. Note, this is a one-sided t.test with $\alpha$ = 0.05, and degree of freedom: n-1 = 20-1 = 19. According to the information given, the sample mean is 2160, and the sample standard deviation is 142. We use t-statistics to conduct the statistical inference.
+- Let we set H0: mu < 2000, and Ha: mu >= 2000. Note, this is a one-sided t-test with $\alpha$ = 0.05, and degree of freedom: n-1 = 20-1 = 19. According to the information given, the sample mean is 2160, and the sample standard deviation is 142. We use t-statistics to conduct the statistical inference.
 ![](pics/IMG_AFA240978D45-1.jpeg)
-- The critical value for $\alpha$ = 0.05 at df = 19 is 1.729 according to the t-distribution table. As 5.05 > 1.729, so we reject the null and claim that we have sufficient evidence to support the manufacturer's claim with a 5 % probability that I am going to reject the null when it is true.
+- The critical value for $\alpha$ = 0.05 at df = 19 is 1.729 according to the t-distribution table. As 5.04 > 1.729, so we reject the null and claim that we have sufficient evidence to support the manufacturer's claim with a 5 % probability that I am going to reject the null when it is true.
+
+**p-value approach**
+
+![](pics/IMG_43183F6AFE44-1.jpeg)
+
 
 (b) Construct a 95% confidence interval for the mean lifetime of household light bulbs.
 
@@ -27,13 +32,14 @@ When $\alpha$ is not given, use the p-value approach to make your conclusions. W
 
 2. There are two manufacturing processes, old and new, that produce the same product. The defect rate has been measured for 20 days for the old process, and for 14 days for the new process, resulting in the following sample summaries.
 
-------| **OLD** | **NEW**
-------------- | ------------- | -------------
-Average defect rate | 4.7 | 2.3
-Standard deviation | 6.8 | 5.0
-
 The firm is interested in switching to the new process only if it can be demonstrated convincingly that the new process reduces the defect rate. Is there significant evidence of that? Use $\alpha$ = 5%; assume that the collected data represent two random samples from Normal distributions. Use the method of testing that is appropriate for this situation.
 
+- This is a one-sided t-test for the difference in mean. As the question mentioned, the new process of manufacturing 
+can reduces the defect rate so Ho: muNEW = muOLD; Ha: muNEW - muOLD < 0.
+
+![](pics/IMG_9983D0D09BFC-1.jpeg)
+
+- Since the collected data represent two random samples from normal distributions, we are able to use t-test at  $\alpha$ = 0.05. The critical value for $\alpha$ = 0.05 is 1.694. 1.186 < 1.694, so there is no evidence to support the claim.
 
 3. (Required for Stat-615, optional for Stat-415) An account on server A is more expensive than an account on server B. However, server A is faster. To see if whether it’s optimal to go with the faster but more expensive server, a manager needs to know how much faster it is. A certain computer algorithm is executed 30 times on server A and 20 times on server B with the following results,
 (a) Is there a significant difference between the two servers?
@@ -71,7 +77,7 @@ summary(acSize)
 ```
 
 (d) The sales price depends on the proximity to a highway.\
-- With a large p-value of 0.245, we do not have sufficient evidence to conclude that the sales price and the highway have an association.
+- With a large p-value of 0.245, we do not have sufficient evidence to conclude that the sales price and its proximity to highway have an association.
 ```{r}
 # mutate HIGHWAY as dummy variable
 homeSales01 %>%
