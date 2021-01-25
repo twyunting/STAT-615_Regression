@@ -43,7 +43,12 @@ can reduces the defect rate so Ho: muNEW = muOLD; Ha: muNEW - muOLD < 0.
 
 3. (Required for Stat-615, optional for Stat-415) An account on server A is more expensive than an account on server B. However, server A is faster. To see if whether it’s optimal to go with the faster but more expensive server, a manager needs to know how much faster it is. A certain computer algorithm is executed 30 times on server A and 20 times on server B with the following results,
 (a) Is there a significant difference between the two servers?
+- we use two-sided t.test, and the answer is Server A and Server B is significant difference.
+
+![](pics/IMG_CE73B7832300-1.jpeg)
+
 (b) Is server A significantly faster?
+
 
 
 4. Micro-project. Data on 522 recent home sales are available on our Blackboard web site The following variables are included.\
@@ -54,6 +59,13 @@ library(tidyverse)
 homeSales <- read_csv("./data/HOME_SALES(1).csv")
 homeSales 
 ```
+```{r}
+# use the t.test function in R
+tout <- t.test(x = homeSales$SALES_PRICE[homeSales$AIR_CONDITIONER == "YES"], y = homeSales$SALES_PRICE[homeSales$AIR_CONDITIONER == "NO"])
+
+tout
+```
+
 (a) The sales price depends on the air conditioner in the house.\
 - We set the houses with air conditioner as `1`, the houses without air conditioner as `0`. The small p-value indicates the sales price is significantly associated with air conditioner in the house.
 ```{r}
