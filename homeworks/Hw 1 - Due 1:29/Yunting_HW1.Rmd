@@ -3,6 +3,7 @@ title: "Homework #1"
 author: "Yunting Chiu"
 date: "`r Sys.Date()`"
 output: pdf_document
+urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}
@@ -43,7 +44,7 @@ can reduces the defect rate so Ho: muNEW = muOLD; Ha: muNEW - muOLD < 0.
 
 3. (Required for Stat-615, optional for Stat-415) An account on server A is more expensive than an account on server B. However, server A is faster. To see if whether it’s optimal to go with the faster but more expensive server, a manager needs to know how much faster it is. A certain computer algorithm is executed 30 times on server A and 20 times on server B with the following results,
 (a) Is there a significant difference between the two servers?
-- we use two-sided t.test, and the answer is Server A and Server B is significant difference.
+- we use two-sided t-procedure, and the answer to this is Server A and Server B is a significant difference.
 
 ![](pics/IMG_CE73B7832300-1.jpeg)
 
@@ -57,55 +58,72 @@ Use software to find out if there is significant evidence that:\
 # read the dataset
 library(tidyverse)
 homeSales <- read_csv("./data/HOME_SALES(1).csv")
-homeSales 
 ```
-```{r}
-# use the t.test function in R
-tout <- t.test(x = homeSales$SALES_PRICE[homeSales$AIR_CONDITIONER == "YES"], y = homeSales$SALES_PRICE[homeSales$AIR_CONDITIONER == "NO"])
 
-tout
-```
 
 (a) The sales price depends on the air conditioner in the house.\
-- We set the houses with air conditioner as `1`, the houses without air conditioner as `0`. The small p-value indicates the sales price is significantly associated with air conditioner in the house.
+- In the two-sided t-procedure, the small p-value < 2.2e-16 is reject the null hypothesis. That is, there is significant evidence exists that the sales price depends on the air conditioner in the house.
 ```{r}
-# mutate AIR_CONDITIONER as dummy variable
-homeSales %>%
-mutate(AIR_CONDITIONER = recode(AIR_CONDITIONER, "YES" = "1", "NO" = "0"),
-       AIR_CONDITIONER = as.double(AIR_CONDITIONER)) -> homeSales01
-       
-acPrice <- lm(SALES_PRICE ~ AIR_CONDITIONER, data = homeSales01) 
-summary(acPrice)
+# use the two-sided t.test function in R
+toutA <- t.test(x = homeSales$SALES_PRICE[homeSales$AIR_CONDITIONER == "YES"], 
+                y = homeSales$SALES_PRICE[homeSales$AIR_CONDITIONER == "NO"], 
+                alternative = "two.sided")
+
+toutA
 ```
 
 (b) On the average, homes with an air conditioner are more expensive.\
-- The model explains sales price of air conditioner homes is 106.22 thousand dollars more expensive than non-air conditioner homes, on average.
-
-(c) On the average, homes with an air conditioner are larger.\
-- According to linear model below, the homes is 3283 thousand dollars less than non-air conditioner homes, on average. And the small p-value 0.0161 points out we have sufficient evidence to reject the null.
+- H0: muAC = muNOAC, Ha: muAC > muNOAC.
+- With 95 % confidence interval, the one-sided small p-value for a test of the distribution of air conditioner house being shifted higher 106.2176 thousand dollars (295.8006-189.5830) than the distribution of no air conditioner house, respectively.
 ```{r}
-acSize <- lm(LOT_SIZE ~ AIR_CONDITIONER, data = homeSales01) 
-summary(acSize)
+# use the one-sided t.test function in R
+toutB <- t.test(x = homeSales$SALES_PRICE[homeSales$AIR_CONDITIONER == "YES"], 
+                y = homeSales$SALES_PRICE[homeSales$AIR_CONDITIONER == "NO"], 
+                alternative = "greater")
+toutB
+```
+(c) On the average, homes with an air conditioner are larger.\
+- Based on the result, the p-value is 4.817e-13, so we have evidence to reject the null hypothesis. The house have ac is 2346.339 sqft, which is larger than the house have no AC (1837.909 sqft) with 95 % confidence interval, on average.
+```{r}
+# use the one-sided t.test function in R
+toutC <- t.test(x = homeSales$FINISHED_AREA[homeSales$AIR_CONDITIONER == "YES"], 
+                y = homeSales$FINISHED_AREA[homeSales$AIR_CONDITIONER == "NO"], 
+                alternative = "greater")
+toutC
 ```
 
 (d) The sales price depends on the proximity to a highway.\
-- With a large p-value of 0.245, we do not have sufficient evidence to conclude that the sales price and its proximity to highway have an association.
+- With a large p-value of 0.09011, we do not have sufficient evidence to conclude that the sales price and its proximity to highway have an association.
 ```{r}
-# mutate HIGHWAY as dummy variable
-homeSales01 %>%
-mutate(HIGHWAY = recode(HIGHWAY, "YES" = "1", "NO" = "0"),
-       HIGHWAY = as.double(HIGHWAY)) -> homeSales02
+# use the two-sided t.test function in R
+toutD <- t.test(x = homeSales$SALES_PRICE[homeSales$HIGHWAY == "YES"], 
+                y = homeSales$SALES_PRICE[homeSales$HIGHWAY == "NO"], 
+                alternative = "two.sided")
 
-hwPrice <- lm(SALES_PRICE ~ HIGHWAY, data = homeSales02) 
-summary(hwPrice)
-  
+toutD
 ```
 
 (e) On the average, homes are cheaper when they are close to a highway.\
+- The small p-value 0.04506 explains that the house is close to a highway is 230.0273 thousand dollars; the house is not close to a highway is 278.9245 thousand dollars. Thus, the sales price of residence of living next to a highway is cheaper 48897.2 dollars than not living next to a highway with 95 % CI, on average.
 ```{r}
+# use the one-sided t.test function in R
+toutE <- t.test(x = homeSales$SALES_PRICE[homeSales$HIGHWAY == "YES"], 
+                y = homeSales$SALES_PRICE[homeSales$HIGHWAY == "NO"], 
+                alternative = "less")
 
+toutE
 ```
 
 
 (f) On the average, homes are cheaper when they are far from a highway.\
+-  With this large p-value 0.9549 we conclude there is no evidence to reject the null hypothesis. That is, we cannot conclude that the sales price of homes are cheaper when they are far from a highway.
+```{r}
+# use the one-sided t.test function in R
+toutF <- t.test(x = homeSales$SALES_PRICE[homeSales$HIGHWAY == "YES"], 
+                y = homeSales$SALES_PRICE[homeSales$HIGHWAY == "NO"], 
+                alternative = "greater")
 
+toutF
+```
+
+Fortunately, I did a similar data EDA project with R Shiny APP for the STAT-613 class, please refer to [**this**](https://twyunting.shinyapps.io/estate/) for more details.
