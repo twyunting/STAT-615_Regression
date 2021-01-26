@@ -18,12 +18,14 @@ When $\alpha$ is not given, use the p-value approach to make your conclusions. W
 (a) Do the data represent sufficient evidence to support the manufacturer’s claim? How can you interpret your answer?
 
 ![](pics/IMG_0CEA784B2359-1.jpeg)
-- Let we set H0: mu < 2000, and Ha: mu >= 2000. Note, this is a one-sided t-test with $\alpha$ = 0.05, and degree of freedom: n-1 = 20-1 = 19. According to the information given, the sample mean is 2160, and the sample standard deviation is 142. We use t-statistics to conduct the statistical inference.
+- For this question, I will be using the One Sample T-test because it tests the mean of a single group against a known mean. In this question, 2160 is the mean of 20 selected light bulb and 2000 is the known population mean. I am not using Z-score because it requires the known information on the population mean, population standard deviation, the sample mean and the sample size. I don’t have any information on the population standard deviation; therefore I chose T-test.
+- Let we set H0: mu < 2000 (Which means the average life of the light bulbs produced by the factory is less than 2000 hours), and Ha: mu >= 2000 (Manufacturer’s claim: Which means the average life of the light bulbs produced in the factory is at least 2000 hours). Note, this is a one-sided t-test with $\alpha$ = 0.05, and degree of freedom: n-1 = 20-1 = 19. According to the information given, the sample mean is 2160, and the sample standard deviation is 142. We use t-statistics to conduct the statistical inference.
 ![](pics/IMG_AFA240978D45-1.jpeg)
-- The critical value for $\alpha$ = 0.05 at df = 19 is 1.729 according to the t-distribution table. As 5.04 > 1.729, so we reject the null and claim that we have sufficient evidence to support the manufacturer's claim with a 5 % probability that I am going to reject the null when it is true.
+**T-stat approach:**
+- The critical value for $\alpha$ = 0.05 at df = 19 is 1.729 according to the t-distribution table. As 5.04 > 1.729, meaning that the sample mean (2160) falls into the rejection area. Therefore, we will reject the null in favor of the manufacturer’s claim.
 
-**p-value approach**
-
+**P-value approach::**
+- Since our t-stat is 5.04. With 19 degrees of freedom, we know that the p-value for a significance level of 0.0001 is 4.590. Therefore, we know that the p-value for 5.04 is even smaller than 0.0001, which confirms the rejection of the null in favor of the manufacturer’s claim.
 ![](pics/IMG_43183F6AFE44-1.jpeg)
 
 
@@ -54,16 +56,20 @@ qt(0.05, 32, lower.tail = FALSE)
 
 3. (Required for Stat-615, optional for Stat-415) An account on server A is more expensive than an account on server B. However, server A is faster. To see if whether it’s optimal to go with the faster but more expensive server, a manager needs to know how much faster it is. A certain computer algorithm is executed 30 times on server A and 20 times on server B with the following results,
 (a) Is there a significant difference between the two servers?
-- We will use a two-sided unpaired t-test for this question because it is used to compared two population means.According to the information given, we can test the below hypothesis:
+- We will use a two-sided unpaired t-test for this question because it is used to compared two population means. According to the information given, we can test the below hypothesis:
 - H0: muA - muB = 0 (Which means that there is no difference between two servers)
 - Ha: muA - muB != 0 (Which means that the two servers are different from each other)
+- Because the two samples have different variances, we use the t statistics. This gives us a t-stat of -2.76
+- Degrees of freedom = nA + nB – 2 = 48. As this question is two-sided test, so we focus on 0.025 for left tail as critical value.
+- The critical value for an $\alpha$ = 0.05 is -1.96. Since -2.76 < [-2.011](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm), the t-stat is within the rejection area. Therefore we reject the null showing that the two servers are different.
 
-
-![](pics/IMG_CE73B7832300-1.jpeg)
+![](pics/IMG_45B88F60228E-1.jpeg)
 
 (b) Is server A significantly faster?
-
-
+- We still use an unpaired t-test but it is one-sided with a slight different hypothesis testing.
+- H0: muA - muB >= 0 (Which means server A is no faster than server B)
+- Ha: muA - muB < 0 (Which means server A is faster than server B)
+- The t-stat is still -2.76 as calculated in part a. The critical value for a one-sided t-test with a 5% $\alpha$ is -1.677 of 48 degrees of freedom. Since -2.76 < -[1.677](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm) meaning that we reject the null and claim that server A is significantly faster. 
 
 4. Micro-project. Data on 522 recent home sales are available on our Blackboard web site The following variables are included.\
 Use software to find out if there is significant evidence that:\
