@@ -35,16 +35,29 @@ When $\alpha$ is not given, use the p-value approach to make your conclusions. W
 
 The firm is interested in switching to the new process only if it can be demonstrated convincingly that the new process reduces the defect rate. Is there significant evidence of that? Use $\alpha$ = 5%; assume that the collected data represent two random samples from Normal distributions. Use the method of testing that is appropriate for this situation.
 
-- This is a one-sided t-test for the difference in mean. As the question mentioned, the new process of manufacturing 
-can reduces the defect rate so Ho: muNEW = muOLD; Ha: muNEW - muOLD < 0.
+- We will use an unpaired t-test for this question because it is used to compare two population means. We chose t-test because we know that these two samples are from normal distributions, but the parameters are unknown.According to the information given, we can test the below hypothesis:
+- Ho: muOLD - muNEW <= 0 (Which means that the new process does not reduce the defect rate)
+- Ha: muOLD - muNEW > 0 (Which means that the new process reduces the defect rate. That is, switching to the new process)
+- Because the two samples have different variances, we use the below formula to calculate the test statistics, this gives us a t-stat of 1.186.
 
 ![](pics/IMG_9983D0D09BFC-1.jpeg)
 
-- Since the collected data represent two random samples from normal distributions, we are able to use t-test at  $\alpha$ = 0.05. The critical value for $\alpha$ = 0.05 is 1.694. 1.186 < 1.694, so there is no evidence to support the claim.
+- Degrees of freedom = nOLD + nNEW – 2 = 20 + 14 – 2 = 32
+- With an $\alpha$ = 0.05 and d.f. = 32, we know that the critical value is 1.694 (Table of T-Distribution). Because our t-stat is smaller than the critical value, meaning that we fail to reject the null, there is no significant evidence to claim that the new process reduces the defect rate. Thus, 1.186 < 1.694, so there is no evidence to support the claim.
+```{r}
+# p: The significance level to use
+# df: The degrees of freedom
+# lower.tail: If TRUE, the probability to the left of p in the t distribution is returned. 
+#             If FALSE, the probability to the right is returned. Default is TRUE.
+qt(0.05, 32, lower.tail = FALSE)
+```
 
 3. (Required for Stat-615, optional for Stat-415) An account on server A is more expensive than an account on server B. However, server A is faster. To see if whether it’s optimal to go with the faster but more expensive server, a manager needs to know how much faster it is. A certain computer algorithm is executed 30 times on server A and 20 times on server B with the following results,
 (a) Is there a significant difference between the two servers?
-- we use two-sided t-procedure, and the answer to this is Server A and Server B is a significant difference.
+- We will use a two-sided unpaired t-test for this question because it is used to compared two population means.According to the information given, we can test the below hypothesis:
+- H0: muA - muB = 0 (Which means that there is no difference between two servers)
+- Ha: muA - muB != 0 (Which means that the two servers are different from each other)
+
 
 ![](pics/IMG_CE73B7832300-1.jpeg)
 
