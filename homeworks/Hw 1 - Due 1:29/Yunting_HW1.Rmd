@@ -66,7 +66,7 @@ qt(0.05, 32, lower.tail = FALSE)
 ![](pics/IMG_45B88F60228E-1.jpeg)
 
 (b) Is server A significantly faster?
-- We still use an unpaired t-test but it is one-sided with a slight different hypothesis testing. 111
+- We still use an unpaired t-test but it is one-sided with a slight different hypothesis testing. 
 - H0: muA - muB >= 0 (Which means server A is no faster than server B)
 - Ha: muA - muB < 0 (Which means server A is faster than server B)
 - The t-stat is still -2.76 as calculated in part a. The critical value for a one-sided t-test with a 5% $\alpha$ is -1.677 of 48 degrees of freedom. Since -2.76 < -[1.677](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm) meaning that we reject the null and claim that server A is significantly faster. 
