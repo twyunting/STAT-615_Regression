@@ -123,7 +123,7 @@ toutD
 ```
 
 (e) On the average, homes are cheaper when they are close to a highway.\
-- The small p-value 0.04506 explains that the house is close to a highway is 230.0273 thousand dollars; the house is not close to a highway is 278.9245 thousand dollars. Thus, the sales price of residence of living next to a highway is cheaper 48897.2 dollars than not living next to a highway with 95 % CI, on average.
+- The small p-value 0.04506 explains that the mean of house is close to a highway is 230.0273 thousand dollars; the mean of house is not close to a highway is 278.9245 thousand dollars. Thus, the sales price of residence of living next to a highway is cheaper 48897.2 dollars than not living next to a highway with 95 % CI, on average.
 ```{r}
 # use the one-sided t.test function in R
 toutE <- t.test(x = homeSales$SALES_PRICE[homeSales$HIGHWAY == "YES"], 
