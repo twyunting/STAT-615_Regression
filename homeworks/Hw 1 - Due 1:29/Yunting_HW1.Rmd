@@ -81,7 +81,7 @@ homeSales <- read_csv("./data/HOME_SALES(1).csv")
 
 
 (a) The sales price depends on the air conditioner in the house.\
-- In the two-sided t-procedure, the small p-value < 2.2e-16 is reject the null hypothesis. That is, there is significant evidence exists that the sales price depends on the air conditioner in the house.
+- In the two-sided t-procedure, the small p-value < 2.2e-16 is reject the null hypothesis. The difference between mean prices included and excluded an AC has 95 % confidence limits 85.9 and 126.5 thousand dollars. That is, there is significant evidence exists that the sales price depends on the air conditioner in the house.
 ```{r}
 # use the two-sided t.test function in R
 toutA <- t.test(x = homeSales$SALES_PRICE[homeSales$AIR_CONDITIONER == "YES"], 
