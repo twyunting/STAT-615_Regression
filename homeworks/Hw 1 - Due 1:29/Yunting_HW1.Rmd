@@ -83,10 +83,10 @@ homeSales <- read_csv("./data/HOME_SALES(1).csv")
 
 ### For two-sample problems, use the F-test to decide which t-test to 
 
-- Ww will use the unequal variance for t-test.
+- We will use the unequal variance for t-test as the p-value is 1.017e-11.
 ```{r}
 attach(homeSales)
-var.test(x=SALES_PRICE[AIR_CONDITIONER == "YES"], y=SALES_PRICE[AIR_CONDITIONER == "NO"])
+var.test(x=SALES_PRICE[AIR_CONDITIONER == "YES"], y = SALES_PRICE[AIR_CONDITIONER == "NO"])
 ```
 
 - In the two-sided t-procedure, the small p-value < 2.2e-16 is reject the null hypothesis. The difference between mean prices included and excluded an AC has 95 % confidence limits 85.9 and 126.5 thousand dollars. That is, there is significant evidence exists that the sales price depends on the air conditioner in the house.

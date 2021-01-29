@@ -17,9 +17,12 @@ H <- read_csv("HOME_SALES.csv")
 head(H)
 ```
 
+## 1. A one-sample T-test
+### 1a. A one-sample, two-sided T-test
+There is a claim that the average price of homes in the region is $300,000. Does the data set support or disprove the claim? This is a two-sided test because there is no specified direction, we are just testing if the population mean is 300,000 or not.
+- With the small p-value 0.0002759, we have sufficient evidence reject the null (H0 is regected). That is, the mean of home price is not 300,000. The sample of mean is 277,8941 and the mean price is 266,035 - 289,754 dollars with 95 % CI. 
 ```{r}
-attach(H)
-t.test(SALES_PRICE, mu=300)
+t.test(H$SALES_PRICE, mu=300)
 ```
 
 ```{r}
@@ -33,13 +36,16 @@ t = (mean(SALES_PRICE) - 300) / (sd(SALES_PRICE)/sqrt(length(SALES_PRICE)))
 t
 ```
 
-Is the mean price less than $300,000? 
-This is a one-sided, left-tail test
+### 1b. A one-sample, left-tail T-test.
+Is the mean price less than $300,000? This is a one-sided, left-tail test
+- We have significant evidence that the mean of home price is less than 300 thousand dollars.
 ```{r}
 t.test(SALES_PRICE, mu=300, alternative="less")
 ```
 
+### 1c. A one-sample, right-tail T-test.
 Is there any evidence that the mean price is above $300,000?
+- 
 ```{r}
  t.test(SALES_PRICE, mu=300, alternative="greater")
 ```
