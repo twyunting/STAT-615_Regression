@@ -79,9 +79,18 @@ library(tidyverse)
 homeSales <- read_csv("./data/HOME_SALES(1).csv")
 ```
 
-
 (a) The sales price depends on the air conditioner in the house.\
+
+### For two-sample problems, use the F-test to decide which t-test to 
+
+- Ww will use the unequal variance for t-test.
+```{r}
+attach(homeSales)
+var.test(x=SALES_PRICE[AIR_CONDITIONER == "YES"], y=SALES_PRICE[AIR_CONDITIONER == "NO"])
+```
+
 - In the two-sided t-procedure, the small p-value < 2.2e-16 is reject the null hypothesis. The difference between mean prices included and excluded an AC has 95 % confidence limits 85.9 and 126.5 thousand dollars. That is, there is significant evidence exists that the sales price depends on the air conditioner in the house.
+
 ```{r}
 # use the two-sided t.test function in R
 toutA <- t.test(x = homeSales$SALES_PRICE[homeSales$AIR_CONDITIONER == "YES"], 
@@ -112,6 +121,15 @@ toutC
 ```
 
 (d) The sales price depends on the proximity to a highway.\
+
+### For two-sample problems, use the F-test to decide which t-test to use
+- With the large p-value 0.08588, meaning that there is no evidence of different variances. Thus, we can constantly using t-test.
+
+```{r}
+attach(homeSales)
+var.test(x=SALES_PRICE[HIGHWAY == "YES"], y=SALES_PRICE[HIGHWAY == "NO"])
+```
+
 - With a large p-value of 0.09011, we do not have sufficient evidence to conclude that the sales price and its proximity to highway have an association.
 ```{r}
 # use the two-sided t.test function in R

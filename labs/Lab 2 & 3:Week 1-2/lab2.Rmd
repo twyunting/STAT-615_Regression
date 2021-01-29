@@ -1,0 +1,51 @@
+---
+title: "Lab 2"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Lab 2. Review of T-tests and F-tests
+
+```{r}
+library(tidyverse)
+H <- read_csv("HOME_SALES.csv") 
+head(H)
+```
+
+```{r}
+attach(H)
+t.test(SALES_PRICE, mu=300)
+```
+
+```{r}
+# compute the t-statistic by hand
+n = length(SALES_PRICE)
+n
+mean(SALES_PRICE)
+sd(SALES_PRICE)
+# use the formula
+t = (mean(SALES_PRICE) - 300) / (sd(SALES_PRICE)/sqrt(length(SALES_PRICE)))
+t
+```
+
+Is the mean price less than $300,000? 
+This is a one-sided, left-tail test
+```{r}
+t.test(SALES_PRICE, mu=300, alternative="less")
+```
+
+Is there any evidence that the mean price is above $300,000?
+```{r}
+ t.test(SALES_PRICE, mu=300, alternative="greater")
+```
+
+Does the sales price depend on the presence of a pool? 
+```{r}
+t.test(x=SALES_PRICE[POOL=="YES"], y=SALES_PRICE[POOL=="NO"])
+```
+
