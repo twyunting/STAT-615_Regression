@@ -19,39 +19,62 @@ head(H)
 
 ## 1. A one-sample T-test
 ### 1a. A one-sample, two-sided T-test
-There is a claim that the average price of homes in the region is $300,000. Does the data set support or disprove the claim? This is a two-sided test because there is no specified direction, we are just testing if the population mean is 300,000 or not.
-- With the small p-value 0.0002759, we have sufficient evidence reject the null (H0 is regected). That is, the mean of home price is not 300,000. The sample of mean is 277,8941 and the mean price is 266,035 - 289,754 dollars with 95 % CI. 
+There is a claim that the average price of homes in the region is $300,000. Does the data set support or disprove the claim? This is a two-sided test because there is no specified direction, we are just testing if the population mean is 300,000 or not.\
+- With the small p-value 0.0002759, we have sufficient evidence reject the null (H0 is rejected). That is, the mean of home price is not 300,000. The sample of mean is 277,8941 and the mean price is 266,035 - 289,754 dollars with 95 % CI. 
 ```{r}
 t.test(H$SALES_PRICE, mu=300)
 ```
 
 ```{r}
 # compute the t-statistic by hand
-n = length(SALES_PRICE)
+n <- length(H$SALES_PRICE)
 n
-mean(SALES_PRICE)
-sd(SALES_PRICE)
+mean(H$SALES_PRICE)
+sd(H$SALES_PRICE)
 # use the formula
-t = (mean(SALES_PRICE) - 300) / (sd(SALES_PRICE)/sqrt(length(SALES_PRICE)))
+t <-  (mean(H$SALES_PRICE) - 300) / (sd(H$SALES_PRICE)/sqrt(length(H$SALES_PRICE)))
 t
 ```
 
 ### 1b. A one-sample, left-tail T-test.
-Is the mean price less than $300,000? This is a one-sided, left-tail test
+Is the mean price less than $300,000? This is a one-sided, left-tail test.\
 - We have significant evidence that the mean of home price is less than 300 thousand dollars.
 ```{r}
+attach(H)
 t.test(SALES_PRICE, mu=300, alternative="less")
 ```
 
 ### 1c. A one-sample, right-tail T-test.
-Is there any evidence that the mean price is above $300,000?
-- 
+Is there any evidence that the mean price is above $300,000?\
+- With the large p-value, we fail to reject the null. That is, no evidence conclude that the mean of home price is greater than 300 thousand dollars.
 ```{r}
  t.test(SALES_PRICE, mu=300, alternative="greater")
 ```
 
-Does the sales price depend on the presence of a pool? 
+## 2. A two-sample T-test
+Does the sales price depend on the presence of a pool? To answer this question, we have to compare homes with the pool and without it. This is a comparison of two populations, so it is a two-sample test.\
+- With a small p-value 0.001408 we have sufficient evidence to reject the null in favor of accepting Ha. In other words, the mean prices are different in the population depending on a pool. With 95 % confidence interval, the sample mean of pool house is 352,120 dollars and the ample mean of non-pool house is 272,396 dollars, respectively. 
 ```{r}
 t.test(x=SALES_PRICE[POOL=="YES"], y=SALES_PRICE[POOL=="NO"])
+```
+- The small p-value explains that the home price with the pool is more expensive with 95 % CI.
+```{r}
+t.test(x=SALES_PRICE[POOL=="YES"], y=SALES_PRICE[POOL=="NO"], alternative="greater")
+```
+
+## 3. A two-sample F-test of variances
+This F-test is used to compare variances of two samples and in particular, to decide which two-sample T- test is appropriate – a test that assumes equal variances or the Satterthwaite approximation.\
+- Firstly, the ratio is 0.968, which is close to 1, meaning that there is no evidence of different variances. Secondly, the p-value is at a significant level, so the T-test of the equal-variances is justified.
+```{r}
+var.test(x=SALES_PRICE[POOL=="YES"], y=SALES_PRICE[POOL=="NO"])
+```
+
+## 4. Parallel boxplots
+- The differences between the two samples can be visualized by parallel box plots. The plot supports our findings on the means and variances.
+```{r}
+H %>%
+  ggplot(aes(x = POOL, y = SALES_PRICE)) +
+  geom_boxplot() +
+  theme_bw()
 ```
 
