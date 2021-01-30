@@ -10,3 +10,9 @@ urlcolor: "blue"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+library(tidyverse)
+aaa <- read_tsv("./data/CH01PR19.txt")
+aaa
+```
+
