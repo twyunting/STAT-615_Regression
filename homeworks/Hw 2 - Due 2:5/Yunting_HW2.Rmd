@@ -10,6 +10,12 @@ urlcolor: "blue"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+1. (1.2) The members of a health spa pay annual membership dues of \$300 plus a charge of \$2 for each visit to the spa. Let Y denote the dollar cost for the year for a member and X the number of visits by the member during the year. Express the relation between X and Y mathematically. Is it a functional relation or a statistical relation (that is, is the relation deterministic or stochastic)?
+
+- deterministic: the output of the model is entirely determined by the values of the parameters and the initial conditions; stochastic is random
+Y = 300 + 2X (dollars)
+It is a functional relationship because a change in the value of X results in a corresponding change in the value of Y. And does not involve any uncertainty.
+
 ```{r}
 library(tidyverse)
 aaa <- read_tsv("./data/CH01PR19.txt")
