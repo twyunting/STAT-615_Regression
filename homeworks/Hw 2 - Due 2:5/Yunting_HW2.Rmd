@@ -13,15 +13,28 @@ knitr::opts_chunk$set(echo = TRUE)
 1. (**1.2**) The members of a health spa pay annual membership dues of $\$$300 plus a charge of $\$$2 for each visit to the spa. Let Y denote the dollar cost for the year for a member and X the number of visits by the member during the year. Express the relation between X and Y mathematically. Is it a functional relation or a statistical relation (that is, is the relation deterministic or stochastic)?
 
 - deterministic: the output of the model is entirely determined by the values of the parameters and the initial conditions; stochastic: random, unpredictable.
-- The association between X and Y is: Y = 300 + 2X (dollars)
+- The association between X and Y is: Y = 300 + 2X (dollars).\
 This is a functional relationship because a effect in the value of the X will cause the corresponding change in the value of the Y. X and Y will not have a uncertain effect.
 
 2. (**1.6**) Suppose the regression parameters are $\beta0$ = 200 and $\beta1$ = 5.0.\
 (a) Plot the regression equation.\
+
+![](pics/IMG_445592DDC4E5-1.jpeg)
+
 (b) Predict the response for X = 10, 20, and 40.\
+
+![](pics/IMG_BEAC2260AB98-1.jpeg)
+
 (c) Explain the meaning of parameters $\beta0$ and $\beta1$.\
+- $\beta0$ = Y intercept of regression line.
+- $\beta1$: one unit change in X, generates a $\beta1$ unit change in Y.
 
 3. (**1.10**) An analyst in a large corporation studied the relation between current annual salary (Y ) and age (X) for the 46 computer programmers presently employed in the company. The analyst concluded that the relation is curvilinear, reaching a maximum at 47 years. Does this imply that the salary for a programmer increases until age 47 and then decreases? Explain.
+
+4. The time it takes to transmit a file always depends on the file size. Suppose you transmitted 30 files, with the average size of 126 Kbytes and the standard deviation of 35 Kbytes. The average transmittance time was 0.04 seconds with the standard deviation of 0.01 seconds. The correlation coefficient between the time and the size was 0.86.
+Based on this data, fit a linear regression model and predict the time it will take to transmit a 400 Kbyte file.
+
+
 
 ```{r}
 library(tidyverse)
