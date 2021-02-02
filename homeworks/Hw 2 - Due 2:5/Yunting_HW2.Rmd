@@ -39,12 +39,25 @@ Based on this data, fit a linear regression model and predict the time it will t
 
 ![](pics/IMG_0445139B99EC-1.jpeg)
 
+
 5. At a gas station, 180 drivers were asked to record the mileage of their cars and the number of miles per gallon. The results are summarized in the table.\
 
-
 (a) Compute the least squares regression line which describes how the number of miles per gallon depends on the mileage.\
+- X is Mileage, y is Miles per gallon. The y-intercept that I computed is 24.77155. That is, if mileage add one unit, the Miles per gallon will have 24.77155 increment.
+- reference: https://www.google.com/search?q=least+squares+regression+line+mean+standard+deviation&rlz=1C5CHFA_enUS920US920&oq=east+squares+regression+mean+de&aqs=chrome.1.69i57j0i22i30l4.8645j1j9&sourceid=chrome&ie=UTF-8#kpvalbx=_lJMZYKK_EIqw5NoPqMOIuAg21
+
+```{r}
+slope <- ((-0.17*3.4)/14634)
+slope
+yIntercept <- 23.8-(slope*24598)
+yIntercept
+```
+
 (b) What do the obtained slope and intercept mean in this situation?\
+- The slope implies a line's steepness and the intercept shows the position where an y-axis intersects. That is, y intercept is on 24.77155 of y-axis.
+
 (c) You purchase a used car with 35,000 miles on it. Predict the number of miles per gallon.\
+- 
 
 6. (Stat-615 only) Show that the sample intercept b0 is a linear and unbiased estimator of the population intercept $\beta0$.
 
