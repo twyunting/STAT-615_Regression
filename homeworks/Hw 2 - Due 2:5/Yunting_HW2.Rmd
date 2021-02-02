@@ -47,8 +47,11 @@ Based on this data, fit a linear regression model and predict the time it will t
 - reference: https://www.google.com/search?q=least+squares+regression+line+mean+standard+deviation&rlz=1C5CHFA_enUS920US920&oq=east+squares+regression+mean+de&aqs=chrome.1.69i57j0i22i30l4.8645j1j9&sourceid=chrome&ie=UTF-8#kpvalbx=_lJMZYKK_EIqw5NoPqMOIuAg21
 
 ```{r}
+# slope(b1) = r*sd(y)/sd(x)
 slope <- ((-0.17*3.4)/14634)
 slope
+
+# y intercept(b0) = sample mean of y - slope* sample mean of x
 yIntercept <- 23.8-(slope*24598)
 yIntercept
 ```
@@ -57,7 +60,14 @@ yIntercept
 - The slope implies a line's steepness and the intercept shows the position where an y-axis intersects. That is, y intercept is on 24.77155 of y-axis.
 
 (c) You purchase a used car with 35,000 miles on it. Predict the number of miles per gallon.\
-- 
+- 23.38915 Miles per gallon
+```{r}
+# y = b0+b1*X
+
+predict35000 <- yIntercept + slope * 35000
+predict35000 
+```
+
 
 6. (Stat-615 only) Show that the sample intercept b0 is a linear and unbiased estimator of the population intercept $\beta0$.
 
