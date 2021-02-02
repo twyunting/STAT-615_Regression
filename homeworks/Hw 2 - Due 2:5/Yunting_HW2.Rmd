@@ -31,13 +31,16 @@ This is a functional relationship because a effect in the value of the X will ca
 
 3. (**1.10**) An analyst in a large corporation studied the relation between current annual salary (Y ) and age (X) for the 46 computer programmers presently employed in the company. The analyst concluded that the relation is curvilinear, reaching a maximum at 47 years. Does this imply that the salary for a programmer increases until age 47 and then decreases? Explain.
 
-- We know the relation between X and Y is **curvilinear**. It is not true because it reaches its maximum at a point and then increasing at a decreasing rate meaning that wage first increases to a max at year 47 and then the increasing rate slows down. In reality, decreasing salary as people age in any company is not make sense, we also can find a bunch of examples in real world.
+- **curvilinear** only explain that X and Y are not linear relation. It is not true because it reaches its maximum at a point and then increasing at a decreasing rate meaning that wage first increases to a max at year 47 and then the increasing rate slows down. In reality, decreasing salary as people age in any company is not make sense, we also can find a bunch of examples in real world.
 
 4. The time it takes to transmit a file always depends on the file size. Suppose you transmitted 30 files, with the average size of 126 Kbytes and the standard deviation of 35 Kbytes. The average transmittance time was 0.04 seconds with the standard deviation of 0.01 seconds. The correlation coefficient between the time and the size was 0.86.
 Based on this data, fit a linear regression model and predict the time it will take to transmit a 400 Kbyte file.
+- Based on the model above, it will take 0.1085 sec to transmit a 400 Kbyte file.
 
+![](pics/IMG_0445139B99EC-1.jpeg)
 
 5. At a gas station, 180 drivers were asked to record the mileage of their cars and the number of miles per gallon. The results are summarized in the table.\
+
 
 (a) Compute the least squares regression line which describes how the number of miles per gallon depends on the mileage.\
 (b) What do the obtained slope and intercept mean in this situation?\
