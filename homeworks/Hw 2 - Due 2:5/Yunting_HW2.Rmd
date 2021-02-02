@@ -8,6 +8,7 @@ urlcolor: "blue"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 1. (**1.2**) The members of a health spa pay annual membership dues of $\$$300 plus a charge of $\$$2 for each visit to the spa. Let Y denote the dollar cost for the year for a member and X the number of visits by the member during the year. Express the relation between X and Y mathematically. Is it a functional relation or a statistical relation (that is, is the relation deterministic or stochastic)?
@@ -43,8 +44,9 @@ Based on this data, fit a linear regression model and predict the time it will t
 5. At a gas station, 180 drivers were asked to record the mileage of their cars and the number of miles per gallon. The results are summarized in the table.\
 
 (a) Compute the least squares regression line which describes how the number of miles per gallon depends on the mileage.\
-- X is Mileage, y is Miles per gallon. The y-intercept that I computed is 24.77155. That is, if mileage add one unit, the Miles per gallon will have 24.77155 increment.
-- reference: https://www.google.com/search?q=least+squares+regression+line+mean+standard+deviation&rlz=1C5CHFA_enUS920US920&oq=east+squares+regression+mean+de&aqs=chrome.1.69i57j0i22i30l4.8645j1j9&sourceid=chrome&ie=UTF-8#kpvalbx=_lJMZYKK_EIqw5NoPqMOIuAg21
+
+![](pics/IMG_5599113142F3-1.jpeg)
+- Reference: https://youtu.be/yttN024P-Gg
 
 ```{r}
 # slope(b1) = r*sd(y)/sd(x)
@@ -57,31 +59,56 @@ yIntercept
 ```
 
 (b) What do the obtained slope and intercept mean in this situation?\
-- The slope implies a line's steepness and the intercept shows the position where an y-axis intersects. That is, y intercept is on 24.77155 of y-axis.
+- X is Mileage, Y is Miles per gallon. The regression line indicates that every increment in mileage will decrease miles per gallon by 0.00003.949706.
+- Intercept means that when mileage equals to zero, the miles per gallon would be 24.77155. However, mileage would be zero but miles per gallon would be 24.77155. In reality, it's doesn't have any practical meaning. 
 
 (c) You purchase a used car with 35,000 miles on it. Predict the number of miles per gallon.\
 - 23.38915 Miles per gallon
 ```{r}
 # y = b0+b1*X
-
 predict35000 <- yIntercept + slope * 35000
 predict35000 
 ```
 
-
 6. (Stat-615 only) Show that the sample intercept b0 is a linear and unbiased estimator of the population intercept $\beta0$.
 
 7. (Computer project - 1.19, 1.24). Grade point average. The director of admissions of a small college selected 120 students at random from the new freshman class in a study to determine whether a students grade point average (GPA) at the end of the freshman year (Y) can be predicted from the ACT test score (X). The results of the study follow.\
+- X is ACT test score, and Y is students GPA.
 
-(a) Obtain the least squares estimates of β0 and β1 and state the estimated regression function.\
-(b) Plot the estimated regression function and the data. Does the estimated regression function appear to fit the data well?\
-(c) Obtain a point estimate of the mean freshman GPA for students with ACT test score X = 30.\
-(d) What is the point estimate of the change in the mean response when the entrance test score increases by one point?\
-(e) Obtain the residuals ei and the sum of the squared residuals 􏰀 e2i .\
-(f) Obtain point estimates of σ2 and σ. In what units is each of them expressed?\
+(a) Obtain the least squares estimates of $\beta0$ and $\beta1$ and state the estimated regression function.\
+- The $\beta0$ is 2.11405 and the $\beta1$ is 0.03883. Based on this regression model below, if ACT score increase by one, GPA will increase by 0.03883.
 ```{r}
-library(tidyverse)
-aaa <- read_tsv("./data/CH01PR19.txt")
-aaa
+asc <- read.table("./data/CH01PR19.txt")
+
+reg <- lm(V1 ~ V2, data = asc)
+summary(reg)
 ```
+
+(b) Plot the estimated regression function and the data. Does the estimated regression function appear to fit the data well?\
+- According to the plot below, there are a few blue data points fitting the line, meaning that the majority of points does not fit the model.
+```{r}
+attach(asc)
+plot(V2, V1)
+reg <- lm(V1 ~ V2)
+abline(reg, col = "red", lwd = 3)
+Yhat = predict(reg, x = V2)
+points(V2, Yhat, col = "blue")
+
+# summary(reg)
+```
+
+(c) Obtain a point estimate of the mean freshman GPA for students with ACT test score X = 30.\
+- The estimated mean of freshman GPA is 3.278863 
+```{r}
+predict(reg, data.frame(V2 = 30))
+```
+
+(d) What is the point estimate of the change in the mean response when the entrance test score increases by one point?\
+```{r}
+
+```
+
+(e) Obtain the residuals ei and the sum of the squared residuals.\
+(f) Obtain point estimates of $\sigma^2$ and $\sigma$. In what units is each of them expressed?\
+
 
