@@ -104,11 +104,28 @@ predict(reg, data.frame(V2 = 30))
 ```
 
 (d) What is the point estimate of the change in the mean response when the entrance test score increases by one point?\
+- The slope and the intercept are both significant. According to the regression results, the change in the mean of GPA will increase in 0.03883.
 ```{r}
-
+summary(reg)
 ```
 
-(e) Obtain the residuals ei and the sum of the squared residuals.\
+(e) Obtain the residuals $ei$ and the sum of the squared residuals.\
+- Ans: residual is -7.175e-05, and sum of the squared residuals is 45.818 with 118 degrees of freedom.
+```{r}
+# formula = smaple mean of Y = b0 + b1* sample mean of x + residual(ei)
+meanGPA <- mean(asc$V1)
+meanGPA
+meanACT <- mean(asc$V2)
+meanACT 
+residual <- meanGPA - 2.11405 - 0.03883 * meanACT 
+residual
+
+anova(reg)
+```
+
 (f) Obtain point estimates of $\sigma^2$ and $\sigma$. In what units is each of them expressed?\
+```{r}
+anova(reg)
+```
 
 
