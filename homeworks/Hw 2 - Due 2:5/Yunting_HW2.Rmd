@@ -32,7 +32,7 @@ This is a functional relationship because a effect in the value of the X will ca
 
 3. (**1.10**) An analyst in a large corporation studied the relation between current annual salary (Y ) and age (X) for the 46 computer programmers presently employed in the company. The analyst concluded that the relation is curvilinear, reaching a maximum at 47 years. Does this imply that the salary for a programmer increases until age 47 and then decreases? Explain.
 
-- **curvilinear** only explain that X and Y are not linear relation. It is not true because it reaches its maximum at a point and then increasing at a decreasing rate meaning that wage first increases to a max at year 47 and then the increasing rate slows down. In reality, decreasing salary as people age in any company is not make sense, we also can find a bunch of examples in real world.
+- **curvilinear** only explain that X and Y are not linear relation. It is not true because it reaches its maximum at a point and then increasing at a decreasing rate meaning that wage first increases to a max at year 47 and then the increasing rate slows down. In reality, decreasing salary as people age in any company is not make sense, we also can find many examples in real world.
 
 4. The time it takes to transmit a file always depends on the file size. Suppose you transmitted 30 files, with the average size of 126 Kbytes and the standard deviation of 35 Kbytes. The average transmittance time was 0.04 seconds with the standard deviation of 0.01 seconds. The correlation coefficient between the time and the size was 0.86.
 Based on this data, fit a linear regression model and predict the time it will take to transmit a 400 Kbyte file.
@@ -70,7 +70,7 @@ predict35000 <- yIntercept + slope * 35000
 predict35000 
 ```
 
-6. (Stat-615 only) Show that the sample intercept b0 is a linear and unbiased estimator of the population intercept $\beta0$.
+6. (**Stat-615 only**) Show that the sample intercept b0 is a linear and unbiased estimator of the population intercept $\beta0$.
 
 7. (Computer project - 1.19, 1.24). Grade point average. The director of admissions of a small college selected 120 students at random from the new freshman class in a study to determine whether a students grade point average (GPA) at the end of the freshman year (Y) can be predicted from the ACT test score (X). The results of the study follow.\
 - X is ACT test score, and Y is students GPA.
@@ -124,6 +124,7 @@ anova(reg)
 ```
 
 (f) Obtain point estimates of $\sigma^2$ and $\sigma$. In what units is each of them expressed?\
+- 
 ```{r}
 anova(reg)
 ```
