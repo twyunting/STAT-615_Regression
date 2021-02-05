@@ -72,6 +72,7 @@ predict35000
 
 6. (**Stat-615 only**) Show that the sample intercept b0 is a linear and unbiased estimator of the population intercept $\beta0$.
 
+
 7. (Computer project - 1.19, 1.24). Grade point average. The director of admissions of a small college selected 120 students at random from the new freshman class in a study to determine whether a students grade point average (GPA) at the end of the freshman year (Y) can be predicted from the ACT test score (X). The results of the study follow.\
 - X is ACT test score, and Y is students GPA.
 

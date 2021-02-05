@@ -1,0 +1,55 @@
+---
+title: "Lab 4"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Lab 4
+
+```{r}
+library(tidyverse)
+cars
+```
+
+```{r}
+plot(dist ~ speed, data = cars,
+xlab = "Speed (in Miles Per Hour)", 
+ylab = "Stopping Distance (in Feet)", 
+main = "Stopping Distance vs Speed", 
+pch = 20,
+cex =2,
+col = "grey")
+```
+
+```{r}
+stop_dist_model = lm(dist ~ speed, data = cars) 
+plot(dist ~ speed, data = cars,
+     xlab = "Speed (in Miles Per Hour)",
+     ylab = "Stopping Distance (in Feet)",
+     main = "Stopping Distance vs Speed",
+     pch  = 20,
+    cex =2,
+    col = "grey")
+abline(stop_dist_model, lwd = 3, col = "darkorange")
+```
+
+## Fit the model
+```{r}
+stop_dist_model = lm(dist ~ speed, data = cars) summary(stop_dist_model)
+```
+
+## Tests in R
+```{r}
+names(summary(stop_dist_model))
+```
+
+```{r}
+summary(stop_dist_model)$coefficients
+```
+
+

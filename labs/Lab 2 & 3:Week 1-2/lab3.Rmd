@@ -1,0 +1,43 @@
+---
+title: "Lab 3"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Lab 2. Review of T-tests and F-tests
+
+```{r}
+library(tidyverse)
+H <- read_csv("HOME_SALES.csv") 
+head(H)
+```
+
+```{r}
+attach(H)
+names(H)
+```
+
+```{r}
+plot(FINISHED_AREA, SALES_PRICE)
+reg = lm( SALES_PRICE ~ FINISHED_AREA ) #predict SALES_PRICE based on FINISHED_AREA
+abline(reg,col="red",lwd=3)
+Yhat = predict(reg, x=FINISHED_AREA)
+points(FINISHED_AREA, Yhat, col="blue")
+```
+```{r}
+predict(reg,data.frame(FINISHED_AREA=c(2500,4000,6000)))
+```
+
+```{r}
+summary(reg)
+```
+
+```{r}
+anova(reg)
+```
+
