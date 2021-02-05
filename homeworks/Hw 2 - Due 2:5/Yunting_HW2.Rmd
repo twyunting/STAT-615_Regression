@@ -20,7 +20,7 @@ This is a functional relationship because a effect in the value of the X will ca
 2. (**1.6**) Suppose the regression parameters are $\beta0$ = 200 and $\beta1$ = 5.0.\
 (a) Plot the regression equation.\
 
-![](pics/IMG_445592DDC4E5-1.jpeg)
+![](pics/IMG_885E8ADF2C5A-1.jpeg)
 
 (b) Predict the response for X = 10, 20, and 40.\
 
@@ -74,9 +74,7 @@ predict35000
 
 ![](pics/IMG_AB0BC6C98312-1.jpeg)
 
-- Reference: https://people.stat.sc.edu/hansont/stat704/lecture4.pdf
-
-
+- We know that E(b1) = $\beta1$, because of the proof is from class book and https://people.stat.sc.edu/hansont/stat704/lecture4.pdf
 
 7. (Computer project - 1.19, 1.24). Grade point average. The director of admissions of a small college selected 120 students at random from the new freshman class in a study to determine whether a students grade point average (GPA) at the end of the freshman year (Y) can be predicted from the ACT test score (X). The results of the study follow.\
 - X is ACT test score, and Y is students GPA.
@@ -118,7 +116,7 @@ summary(reg)
 (e) Obtain the residuals $ei$ and the sum of the squared residuals.\
 - Ans: residual is -7.175e-05, and sum of the squared residuals is 45.818 with 118 degrees of freedom.
 ```{r}
-# formula = smaple mean of Y = b0 + b1* sample mean of x + residual(ei)
+# formula = smaple mean of Y - b0 + b1* sample mean of x + residual(ei)
 meanGPA <- mean(asc$V1)
 meanGPA
 meanACT <- mean(asc$V2)
@@ -130,9 +128,11 @@ anova(reg)
 ```
 
 (f) Obtain point estimates of $\sigma^2$ and $\sigma$. In what units is each of them expressed?\
-- mean of square = 0.3883
+- The mean square of the error =  $s^2$ = 0.3883. Since $s^2$ is an unbiased estimator for $\sigma^2$, the point estimate for $\sigma^2$ is 0.3883. Similarly s = 0.6231372 and it is an unbiased estimator for $\sigma$, so the point estimate for $\sigma$ is 0.6231372. The unit of each is GPA score.
 ```{r}
 anova(reg)
+sigma <- sqrt(0.3883)
+sigma
 ```
 
 

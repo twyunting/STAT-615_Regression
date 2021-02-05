@@ -24,9 +24,9 @@ names(H)
 
 ```{r}
 plot(FINISHED_AREA, SALES_PRICE)
-reg = lm( SALES_PRICE ~ FINISHED_AREA ) #predict SALES_PRICE based on FINISHED_AREA
-abline(reg,col="red",lwd=3)
-Yhat = predict(reg, x=FINISHED_AREA)
+reg = lm(SALES_PRICE ~ FINISHED_AREA) #predict SALES_PRICE based on FINISHED_AREA
+abline(reg,col="red",lwd=5) 
+Yhat = predict(reg, x=FINISHED_AREA) #red line = Yhat = prediction
 points(FINISHED_AREA, Yhat, col="blue")
 ```
 ```{r}

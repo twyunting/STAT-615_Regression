@@ -10,12 +10,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # R Lab 4
-
+- Read the build-in cars dataframe
 ```{r}
 library(tidyverse)
-cars
+cars #dist = distance
 ```
-
+- Plot the two variables, independent variable is Speed (in Miles Per Hour) and dependent variable is Stopping Distance (in Feet).
 ```{r}
 plot(dist ~ speed, data = cars,
 xlab = "Speed (in Miles Per Hour)", 
@@ -40,16 +40,126 @@ abline(stop_dist_model, lwd = 3, col = "darkorange")
 
 ## Fit the model
 ```{r}
-stop_dist_model = lm(dist ~ speed, data = cars) summary(stop_dist_model)
+stop_dist_model = lm(dist ~ speed, data = cars) 
+summary(stop_dist_model)
 ```
 
 ## Tests in R
+- find the `coefficients` table so we use `names` function to see the all tables in summary.
 ```{r}
 names(summary(stop_dist_model))
 ```
-
+- We can find b0 = -17.579095 and b1 = 3.9324088 from the coefficients table below. 
+- b0 and b1 are the estimators for the model by $\beta0$ and $\beta1$.
 ```{r}
 summary(stop_dist_model)$coefficients
 ```
+## $\beta1$
+- Let we focus on $\beta1$ first so we need to extract $\beta1$ row.
+```{r}
+summary(stop_dist_model)$coefficients[2, ] #[row, column]
+```
+- Estimate b1 is 3.932409e+00
+- Standard error of b1 is 0.4155128
+- t-value, which is testing for null hypothesis.
+- p-value = 1.489836e-12
+
+## $\beta0$
+
+- Extract $\beta0$ row from coefficients table
+```{r}
+summary(stop_dist_model)$coefficients[1,]
+```
+
+## create new factors 
+```{r}
+stop_dist_model_test_info = summary(stop_dist_model)$coefficients
+b_0 = stop_dist_model_test_info[1, 1] # Estimate 
+b_0_se = stop_dist_model_test_info[1, 2] # Std. Error 
+b_0_t = stop_dist_model_test_info[1, 3] # t value 
+b_0_pval = stop_dist_model_test_info[1, 4] # Pr(>|t|)
+
+b_1 = stop_dist_model_test_info[2, 1] # Estimate
+b_1_se = stop_dist_model_test_info[2, 2] # Std. Error 
+b_1_t = stop_dist_model_test_info[2, 3] # t value 
+b_1_pval = stop_dist_model_test_info[2, 4] # Pr(>|t|)
+```
+
+## Manually Task
+- t-statistic for b1 by hand
+```{r}
+(b_1 - 0) / b_1_se
+```
+
+- From coefficients table
+```{r}
+b_1_t
+```
+
+- p-value by hand
+```{r}
+2 * pt(abs(b_1_t), df = length(resid(stop_dist_model)) - 2, lower.tail = FALSE)
+```
+
+- From coefficients table
+```{r}
+b_1_pval
+```
+
+## Significance of Regression, t-Test
+- For the `cars` example:
+  + Under H0 there is not a significant linear relationship between speed and stopping distance. 
+  + Under H1 there is a significant linear relationship between speed and stopping distance.
+  
+That is, we need to know the expected value of b1 is an unbiased estimator for $\beta1$. We set H0 : $\beta1$ = 0 vs H1 : $\beta1$ != 0. With the small p-value, we have evidence to reject the null in favor of alternative hypothesis. Thus, the $\beta1$ is not equal to zero so there is a significant linear relation between `Speed (in Miles Per Hour)` and `Stopping Distance (in Feet)`.
+
+## Know what is the linear
+```{r}
+set.seed(42)
+x = seq(-1, 1, 0.01)
+y = 5 + 4 * x ^ 2 + rnorm(length(x), 0, 0.5) 
+plot(x, y, pch = 20, cex = 2, col = "grey") 
+abline(lm(y ~ x), lwd = 3, col = "darkorange")
+```
+- Let we run the linear model and set: H0 : $\beta1$ = 0 vs H1 : $\beta1$ != 0
+- With the large p-value 0.756 explained below, we fail to reject the null. In other words, there is no significant linear relationship between x and y.
+```{r}
+regSec <- lm(y~x)
+regSec
+summary(regSec)
+```
+
+## Confidence Intervals in R
+Using `confint` function then we can smoothly get the confidence intervals for $\beta0$ and $\beta1$.
+```{r}
+# 99% cinfidence interval
+confint(stop_dist_model, level = 0.99)
+```
+- In this case, if the car increase in 1 mile/per hour, the Stopping Distance (in Feet) will increase in 2.817919 to 5.0468988 feet with 99 % confidence interval. We have 99% confident to explain it.
+
+## Extract the results separately
+```{r}
+confint(stop_dist_model, level = 0.99)[1,]
+confint(stop_dist_model, level = 0.99)[1, 1]
+confint(stop_dist_model, level = 0.99)[1, 2]
+confint(stop_dist_model, parm = "(Intercept)", level = 0.99)
+confint(stop_dist_model, level = 0.99)[2,]
+confint(stop_dist_model, level = 0.99)[2, 1]
+confint(stop_dist_model, level = 0.99)[2, 2]
+confint(stop_dist_model, parm = "speed", level = 0.99)
+```
+
+## Verify that calculations that R is performing for the $\beta1$ interval.
+
+```{r}
+# store estimate
+b_1 = coef(stop_dist_model)[2] # store standard error
+b_1_se = summary(stop_dist_model)$coefficients[2, 2] # calculate critical value for two-sided 99% CI
+crit = qt(0.995, df = length(resid(stop_dist_model)) - 2) # est - margin, est + margin
+c(b_1 - crit * b_1_se, b_1 + crit * b_1_se)
+```
+
+## Note
 
 
+![](pics/IMG_3DA8E9586265-1.jpeg)
