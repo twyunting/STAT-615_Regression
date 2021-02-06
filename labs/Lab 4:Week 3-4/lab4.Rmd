@@ -161,5 +161,4 @@ c(b_1 - crit * b_1_se, b_1 + crit * b_1_se)
 
 ## Note
 
-
 ![](pics/IMG_3DA8E9586265-1.jpeg)
