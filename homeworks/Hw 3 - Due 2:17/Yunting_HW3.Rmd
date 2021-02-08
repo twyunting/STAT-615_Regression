@@ -1,0 +1,13 @@
+---
+title: "Homework #3"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
