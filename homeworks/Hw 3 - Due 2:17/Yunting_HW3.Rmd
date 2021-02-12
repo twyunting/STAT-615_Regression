@@ -11,13 +11,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-1. (2.10) For each of the following questions, explain whether a confidence interval for a mean response or a prediction interval for a new observation is appropriate.\
+6a.
+```{r}
+asc <- read.table("./data/CH01PR19.txt")
+reg <- lm(V1 ~ V2, data = asc)
+# summary(reg)
+confint(reg, level = 0.99)
+```
 
-(a) Because we need to predict the humidity level tomorrow. We set the tomorrow temperature at 31 Celsius, so we need to prove the true temperature tomorrow with prediction interval.\
-
-(b) The question has give a sample mean of disposable income. So we should focus on confidence interval for a mean response for estimating their cost of meal out.\
-
-(c) Based on the present level of electricity consumption, the question will predict the next month electricity consumption in Twin Cities service area. Thus, prediction interval for a new month's level is appropriate.
-
-2. 
-3. 30 files, size of 126 Kbytes, standard deviation of 35 Kbytes.

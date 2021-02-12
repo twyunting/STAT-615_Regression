@@ -1,0 +1,40 @@
+---
+title: "Lab 5"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Lab 5
+
+```{r}
+library(tidyverse)
+C = read.table(url("http://statweb.lsu.edu/EXSTWeb/StatLab/DataSets/NKNWData/CH01PR20.txt"))
+# head(C)
+```
+
+```{r}
+attach(C)
+number_of_copier=V2; service_time=V1;
+reg = lm(service_time ~ number_of_copier)
+# Rename variables
+# Fit a regression model of Y on X
+
+summary(reg)
+```
+
+```{r}
+names(reg)
+```
+```{r}
+reg$coefficients
+```
+
+```{r}
+confint(reg)
+```
+

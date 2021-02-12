@@ -1,0 +1,115 @@
+---
+title: "Lab 6"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# R Lab 6
+# Exercise 1
+## 1.1
+- X is V2, which means the ACT test score.
+- Y is V1, which means the GPA at the end of the freshman year.
+```{r}
+GPA = read.table("./data/CH01PR19.txt")
+attach(GPA)
+X <- V2
+Y <- V1
+# X = ACT, Y = GPA
+```
+## 1.2
+According to the plot below, we can see that many data points do not fit the linear regression line. 
+```{r}
+reg = lm(Y ~ X)
+reg
+plot(X, Y, xlab = "x = ACT", ylab = "y = GPA")
+abline(reg, col = "red")
+# b0 =  2.11405   
+# b1 = 0.03883  
+```
+
+## 1.3
+We use `predict` function to estimate it. If ACT score is 30, then the estimated mean of the freshman GPA would be 3.278863.
+```{r}
+predict(reg, data.frame(X = 30))
+```
+## 1.4
+The key is we should find b1. If the ACT score increases by one point, we estimate GPA would be changed 0.03882713 units.
+```{r}
+summary(reg)
+reg$coefficients[2]
+```
+## 1.5
+$e$ is the residuals. Another way is we can use `anova` table to find out the residuals.
+```{r}
+e = Y - fitted.values(reg)
+e # ei each
+sum(e^2) # sum of the squared residuals 
+
+anova(reg)
+```
+## 1.6
+estimated variance is 0.3882848, and residual standard error: 0.6231 on 118 degrees of freedom
+```{r}
+n <- length(X)
+var_est <- sum(e^2)/(n-2) # sum of the squared residuals - degrees of freedom (n -2, b0 and b1 so minus 2)
+var_est
+sqrt(var_est)
+summary(reg)
+```
+
+# Exercise 2
+## 2.1
+Zero is not included, because the b1 is [0.005385614, 0.07226864].
+```{r}
+confint(reg, level = 0.99)
+```
+## 2.2
+- Ho: β1 = 0 (have NOT a linear association between ACT score (X) and GPA at the end of the freshman year (Y)).
+- Ha: β1 ≠ 0 (have a linear association between ACT score (X) and GPA at the end of the freshman year (Y)).
+
+According to tables of a linear regression model above, we have evidence to reject the null hypothesis in favor of the alternative hypothesis with the 99 % confidence interval. Thus, there is a linear association between student’s ACT score (X) and GPA at the end of the freshman year (Y).
+
+## 2.3
+For the actual **population mean** response - confidence intervals
+
+If ACT score is 28, wehave 95% certain contains the population mean of freshman GPA is 3.061384 to 3.341033.
+```{r}
+predict(reg, data.frame(X = 28), interval = "confidence", level = 0.95)
+```
+
+## 2.4
+For the individual response (actual response) $Y$ - prediction intervals
+
+If student obtained a 28 on the ACT, the 95 % prediction interval is 1.959355 to 4.443063 of his freshman GPA.
+```{r}
+predict(reg, data.frame(X = 28), interval = "prediction")
+```
+
+## 2.5
+The majority of data points are in the range of upper band and lower band. We can conclude that the true regression relation has been precisely estimated.
+```{r}
+n = length(X) #sample sizes
+e = reg$residuals # residuals
+s = sqrt(sum(e^2)/(n-2)) # estimated standard deviation = root MSE
+s
+W = sqrt(qf(0.95,2,n-2))  # quantity of F-distribution
+W
+Yhat = fitted.values(reg) # Yhat = b0 + b1x = predict(reg)
+Sxx = (n-1)*var(X) 
+
+margin = W*s*sqrt(1/n + (X - mean(X))^2/Sxx) 
+upper.band = Yhat + W*s*sqrt(1 + 1/n + (X - mean(X))^2/Sxx) 
+lower.band = Yhat - W*s*sqrt(1 + 1/n + (X - mean(X))^2/Sxx) 
+
+plot(X,Y,xlab="ACT", ylab="Y = GPA", xlim = c(20,30))
+abline(reg,col="red")
+lines(X,upper.band,col="blue")
+lines(X,lower.band,col="blue")
+```
+
