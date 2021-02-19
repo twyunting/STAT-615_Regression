@@ -113,3 +113,8 @@ lines(X,upper.band,col="blue")
 lines(X,lower.band,col="blue")
 ```
 
+```{r}
+anova(reg)
+summary(reg)
+```
+

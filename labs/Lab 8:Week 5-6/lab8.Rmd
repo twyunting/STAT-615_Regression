@@ -1,0 +1,25 @@
+---
+title: "Lab 7"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# R Lab 8
+```{r}
+attach(mtcars)
+reg = lm( mpg ~ wt )
+plot(wt,mpg)
+abline(reg) # reg = regression model
+```
+
+```{r}
+par(mfrow = c(2, 2))
+plot(reg)
+```
+
