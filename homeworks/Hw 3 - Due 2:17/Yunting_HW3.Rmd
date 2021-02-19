@@ -14,8 +14,45 @@ library(tidyverse)
 6a.
 ```{r}
 asc <- read.table("./data/CH01PR19.txt")
+attach(asc)
 reg <- lm(V1 ~ V2, data = asc)
-# summary(reg)
+summary(reg)
 confint(reg, level = 0.99)
+```
+
+```{r}
+predict(reg, data.frame(V2 = 28), interval = "confidence")
+```
+
+```{r}
+predict(reg, data.frame(V2 = 28), interval = "predict")
+```
+# 4
+```{r}
+
+```
+# 6
+```{r}
+asc %>%
+  ggplot(aes(x = V2, y = V1)) +
+  geom_point() +
+  geom_smooth(se = FALSE, method = lm, colour = "red") +
+  labs(x = "ACT", y = "GPA") +
+  xlim(20, 30) +
+  theme_bw() 
+  
+```
+
+```{r}
+attach(reg)
+plot(V1, V2, xlim = c(20, 30)) 
+abline(reg,col = "red")
+lines(V2, upper.band, col = "blue")
+lines(V2, lower.band, col = "green")
+```
+
+```{r}
+a <- sqrt(1/180+0.0028)
+a
 ```
 
