@@ -12,7 +12,7 @@ library(tidyverse)
 ```
 
 1. **(2.17)** An analyst fitted normal error regression model and conducted an F test of H0 : $\beta1$ = 0
-versus H1 : $\beta1$ = 0. The P-value of the test was 0.033, and the analyst concluded that $\beta1$ 6= 0.
+versus H1 : $\beta1$ = 0. The P-value of the test was 0.033, and the analyst concluded that $\beta1$ = 0.
 Was the $\alpha$ level used by the analyst greater than or smaller than 0.033? If the $\alpha$ level had been 0.01, what would have been the appropriate conclusion?
 
 The hypothesis is H0 : $\beta1$ = 0 v.s. H1 : $\beta1$ = 0. With the small p-value 0.033, we have evidence to reject the null, meaning that $\alpha$ > 0.033. If the $\alpha$ level had been 0.01 ???
@@ -25,10 +25,12 @@ Because t-test have one-sided test(left tail & right tail), and two-sided test f
 3. **(2.19)** When testing H0 : $\beta1$ = 0 versus H1 : $\beta1$ 6= 0, why is the F-test a one-sided test even
 though H1 includes both cases $\beta1$ < 0 and $\beta1$ > 0?
 
+4.
+
 5. **(Continued from HW-2,3)** At a gas station, 180 drivers were asked to record the mileage of
 their cars and the number of miles per gallon. The results are summarized in the table.
 
-The sample correlation coefficient is r = −0.17. In the previous homework, we fit a regression model that described how the number of miles per gallon depends on the mileage.
+The sample correlation coefficient is r = -0.17. In the previous homework, we fit a regression model that described how the number of miles per gallon depends on the mileage.
 
 (a) Complete the ANOVA table. Include sums of squares, degrees of freedom, mean squares, and the F-statistic.
 
@@ -41,15 +43,16 @@ The sample correlation coefficient is r = −0.17. In the previous homework, we 
 - Ho: $\beta1$ = 0 v.s. $\beta1$ != 0
 - According to [F Distribution Tables](http://socr.ucla.edu/Applets.dir/F_Table.html), the F(1, 178) is 5.0239 with $\alpha$ at 0.025, F(1, 178) is 6.635 with $\alpha$ at 0.01. So we can know the p-value is between 0.025 to 0.01, meaning that we have evidence ($\alpha$ < 0.05) to reject the null hypothesis. Also, we can conclude that the slope is significant.
 
-(c) From your ANOVA table, estimate the standard deviation of responses, $\sigma$ = Std(Yi).
+(c) From your ANOVA table, estimate the standard deviation of responses, $\sigma$ = Std(Yi).\
+
 The unbiased estimation of standard deviation is 3.36
 
 ![](pics/Screen Shot 2021-02-21 at 8.21.54 PM.png)
 
 
-(d) Calculate R^2 and comment on the goodness of fit in this regression problem.
+(d) Calculate $R^2$ and comment on the goodness of fit in this regression problem.
 
-R^2 = 0.0289 is the more straightforward interpretation for the model because it accounts for the 2.89% of the total variation in Miles per gallon explained by Mileage. With a low percentage of R^2, it doesn't look like fitness in this regression. We might be able to change another independent variable to fit the model with the dependent variable Miles per gallon.
+$R^2$ = 0.0289 is the straightforward interpretation for the model because it accounts for the 2.89% of the total variation in Miles per gallon explained by Mileage. With a low percentage of $R^2$, it doesn't look like fitness in this regression. We might be able to change another independent variable to fit the model with the dependent variable Miles per gallon.
 
 6. Computer project (2.23, 2.67).\
 **Grade point average** (this data set was already used in Homework-2,3).
@@ -101,9 +104,9 @@ Firstly, $\beta1$ is 0.03883, which is positive slope so the correlation coeffic
 
 (f) (leftover from the last homework) On the same graph, plot
 
-  • the data
-  • the least squares regression line for ACT scores
-  • the 95 percent confidence band for the true regression line for ACT scores between 20 and 30.
+• the data\
+• the least squares regression line for ACT scores\
+• the 95 percent confidence band for the true regression line for ACT scores between 20 and 30\
   
 ```{r}
 # confidence band for the entire population regression line
