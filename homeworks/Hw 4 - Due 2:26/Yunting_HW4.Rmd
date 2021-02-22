@@ -48,8 +48,8 @@ The unbiased estimation of standard deviation is 3.36
 
 
 (d) Calculate R^2 and comment on the goodness of fit in this regression problem.
--
-$R^2$ = 0.0289 is the more straightforward interpretation for the model because it accounts for the 2.89% of the total variation in Miles per gallon explained by Mileage. With a low percentage of $R^2$, it doesn't look like fitness in this regression. We might be able to change another independent variable to fit the model with the dependent variable Miles per gallon.
+
+R^2 = 0.0289 is the more straightforward interpretation for the model because it accounts for the 2.89% of the total variation in Miles per gallon explained by Mileage. With a low percentage of R^2, it doesn't look like fitness in this regression. We might be able to change another independent variable to fit the model with the dependent variable Miles per gallon.
 
 6. Computer project (2.23, 2.67).\
 **Grade point average** (this data set was already used in Homework-2,3).
