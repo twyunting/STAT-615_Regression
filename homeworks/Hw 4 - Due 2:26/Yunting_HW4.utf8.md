@@ -1,15 +1,12 @@
 ---
 title: "Homework #4"
 author: "Yunting Chiu"
-date: "`r Sys.Date()`"
+date: "2021-02-23"
 output: pdf_document
 urlcolor: "blue"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
-```
+
 1. **(2.17)** An analyst fitted normal error regression model and conducted an F test of H0 : $\beta1$ = 0
 versus H1 : $\beta1$ = 0. The P-value of the test was 0.033, and the analyst concluded that $\beta1$ = 0.
 Was the $\alpha$ level used by the analyst greater than or smaller than 0.033? If the $\alpha$ level had been 0.01, what would have been the appropriate conclusion?
@@ -59,7 +56,8 @@ $R^2$ = 0.0289 is the straightforward interpretation for the model because it ac
 
 6. Computer project (2.23, 2.67).\
 **Grade point average** (this data set was already used in Homework-2,3).
-```{r}
+
+```r
 # read the data
 gpa <- read.table("./data/CH01PR19.txt")
 
@@ -67,9 +65,42 @@ reg <- lm(V1 ~ V2, data = gpa)
 # call the regression model summary table
 summary(reg)
 ```
+
+```
+## 
+## Call:
+## lm(formula = V1 ~ V2, data = gpa)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.74004 -0.33827  0.04062  0.44064  1.22737 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  2.11405    0.32089   6.588  1.3e-09 ***
+## V2           0.03883    0.01277   3.040  0.00292 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.6231 on 118 degrees of freedom
+## Multiple R-squared:  0.07262,	Adjusted R-squared:  0.06476 
+## F-statistic:  9.24 on 1 and 118 DF,  p-value: 0.002917
+```
 (a) Set up the ANOVA table. Use it to answer questions (b-e).
-```{r}
+
+```r
 anova(reg)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: V1
+##            Df Sum Sq Mean Sq F value   Pr(>F)   
+## V2          1  3.588  3.5878  9.2402 0.002917 **
+## Residuals 118 45.818  0.3883                    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 (b) (Stat-615 only) What is estimated by MSR in your ANOVA table? by MSE? Under what conditions do MSR and MSE estimate the same quantity?\
 
@@ -111,15 +142,30 @@ Firstly, $\beta1$ is 0.03883, which is positive slope so the correlation coeffic
 • the least squares regression line for ACT scores\
 • the 95 percent confidence band for the true regression line for ACT scores between 20 and 30\
   
-```{r}
+
+```r
 # confidence band for the entire population regression line
 attach(gpa)
 n = length(V2) #sample sizes
 e = reg$residuals # residuals
 s = sqrt(sum(e^2)/(n-2)) # estimated standard deviation = root MSE
 s
+```
+
+```
+## [1] 0.623125
+```
+
+```r
 W = sqrt(2*qf(0.95,2,n-2))  # quantity of F-distribution
 W
+```
+
+```
+## [1] 2.479149
+```
+
+```r
 Yhat = fitted.values(reg) # Yhat = b0 + b1x = predict(reg)
 Sxx = (n-1)*var(V2) # sum of the squares of the difference between each x and its mean
 
@@ -132,4 +178,6 @@ abline(reg,col="red")
 lines(V2 ,upper.band,col="blue")
 lines(V2 ,lower.band,col="blue")
 ```
+
+![](Yunting_HW4_files/figure-latex/unnamed-chunk-3-1.pdf)<!-- --> 
 
