@@ -20,7 +20,7 @@ Reference: https://stats.stackexchange.com/questions/50727/f-statistic-f-critica
 2. **(2.18)** For conducting statistical tests concerning the parameter $\beta1$, why is the t-test more
 versatile than the F-test?
 
-Because t-test has one-sided test(left tail & right tail), and two-sided test for $\beta1$. Conversely, F-test (most notably in ANOVA) only can detect H0 : $\beta1$ = 0 v.s. H1 : $\beta1$ != 0.
+Because t-test has one-sided test(left tail & right tail) and two-sided test for $\beta1$. Conversely, F-test (most notably in ANOVA) only can detect H0 : $\beta1$ = 0 v.s. H1 : $\beta1$ != 0.
 
 3. **(2.19)** When testing H0 : $\beta1$ = 0 versus H1 : $\beta1$ 6= 0, why is the F-test a one-sided test even
 though H1 includes both cases $\beta1$ < 0 and $\beta1$ > 0?
