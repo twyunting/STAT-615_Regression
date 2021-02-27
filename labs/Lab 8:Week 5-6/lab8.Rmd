@@ -1,5 +1,5 @@
 ---
-title: "Lab 7"
+title: "Lab 8"
 author: "Yunting Chiu"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -11,6 +11,7 @@ library(tidyverse)
 ```
 
 # R Lab 8
+## STUDENTIZED RESIDUALS AND OUTLIERS
 ```{r}
 attach(mtcars)
 reg = lm( mpg ~ wt )
@@ -21,5 +22,18 @@ abline(reg) # reg = regression model
 ```{r}
 par(mfrow = c(2, 2))
 plot(reg)
+```
+
+## Studentized residuals and testing for outliers
+```{r}
+t = rstudent(reg)
+t
+par(mfrow=c(1,1))
+plot(t)
+```
+
+```{r}
+library("car")
+ncvTest(reg)
 ```
 
