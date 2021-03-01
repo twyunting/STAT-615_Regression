@@ -3,6 +3,7 @@ title: "Homework #5"
 author: "Yunting Chiu"
 date: "`r Sys.Date()`"
 output: pdf_document
+urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}
@@ -21,6 +22,9 @@ of squares* “since the formula looks like the one for an ordinary sum of squar
 2. **(3.19)** A student fitted a linear regression function for a class assignment. The student plotted the residuals $ei$ against responses $Yi$ and found positive relation. When the residuals were plotted against the fitted values $\hat{Y}i$, the student found no relation.
 
 (a) How could the differences arise? Which is the more meaningful plot
+- The residuals represent the distance from the $Yi$ to the $\hat{Y}i$. If there is no violation of assumptions, it should be a clear pattern when plotting residues against the Y-values that is more meaningful when performing residual analysis. Plotting $ei$ against $Yi$ is not a good choice, because it would always be a positive association between both.
+- The ideal plot is the values should depart from the $\hat{Y}i$ (regression line), which is more make sense.
+- Reference: http://www.stat.columbia.edu/~fwood/Teaching/w4315/Fall2010/homework_4/homework_4_solution
 
 3. (Computer project, 3.3) Refer to the GPA data from the previous h/w assignments
 ```{r}
@@ -106,10 +110,15 @@ ncvTest(reg2)
 outlierTest(reg2)
 ```
 (d) lack of fit.
-- 
+- The difference is not significant so we have no evidence to say the linear regression model have a lack of fit (p-value is 0.8066).
 ```{r}
 reduced <-  lm(crime ~ dipoma, data = crime) # assume linearity,
 full <-  lm(crime ~ as.factor(dipoma), data = crime) # the model does NOT assume linearity
 anova(reduced,full) 
 ```
 
+5. For the “toy” example, consider a small data set
+Try to do as much as you can by hand, without the use of a computer. The numbers are quite simple!
+(a) Plot these data and draw the least squares regression line, which has the expression y = 1 + x.
+(b) Compute all the residuals.
+(c) Compute all sums of squares by hand, from their definitions:
