@@ -228,13 +228,28 @@ df_all
 ```
 ```{r}
 df_all %>%
-  filter(case_types == "confirmed_US") %>%
+  filter(case_types == "confirmed_US" & Country_State == "US_Virginia") %>%
+  tail()
   
 
 df_all %>%
-  filter(case_types == "deaths_US" & County == "Montgomery") %>%
-  tail()
+  filter(case_types == "deaths_US" & Country_State == "US_Virginia")
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Analysis Data
 1. Create a data frame by with data grouped by `Country_Region`, `Continent` `case_type`, `rank_p` and `rank_d` that summarizes the current totals and the totals as a percentage of total population.
