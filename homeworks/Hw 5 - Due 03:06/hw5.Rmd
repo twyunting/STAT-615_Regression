@@ -76,14 +76,40 @@ A criminologist studies the relationship between level of education and crime ra
 #col_names: describes the column names (equivalent to header in base R). It has three possible values:
 #TRUE will use the the first row of data as column names.
 #FALSE will number the columns sequentially.
+#crime <- read_delim("./data/crimeRateData.txt", delim = " ", col_names = FALSE)
+#crime
 
-crime <- read_delim("./data/crimeRateData.txt", delim = " ", col_names = FALSE)
-crime
+crime <- read.table("./data/crimeRateData.txt")
+crime %>%
+  rename(crime = V1, dipoma = V2) -> crime
+```
+A linear regression of Y on X is then fit to these data. Test:
+(a) normal distribution of residuals;
+- According to Shapiro-Wilk normality test the p-value is 0.1559, meaning that the data are follow a normal distribution.
+```{r}
+reg2 <- lm(crime ~ dipoma, data = crime)
+plot(rstudent(reg2))
+
+attach(crime)
+par(mfrow = c(2, 2))
+plot(reg2)
+shapiro.test(rstudent(reg2))
+```
+(b) constant variance of residuals;
+- The p-value = 0.94338 indicates we fail to reject the null, meaning that data tested are not the non-constant variance. 
+```{r}
+ncvTest(reg2)
+```
+(c) presence of outliers;
+- The unadjusted p-value 0.0031098 indicates no outliers.
+```{r}
+outlierTest(reg2)
+```
+(d) lack of fit.
+- 
+```{r}
+reduced <-  lm(crime ~ dipoma, data = crime) # assume linearity,
+full <-  lm(crime ~ as.factor(dipoma), data = crime) # the model does NOT assume linearity
+anova(reduced,full) 
 ```
 
-A linear regression of Y on X is then fit to these data. Test:
-
-(a) normal distribution of residuals;
-(b) constant variance of residuals;
-(c) presence of outliers;
-(d) lack of fit.
