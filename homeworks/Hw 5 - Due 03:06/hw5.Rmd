@@ -89,9 +89,10 @@ crime %>%
 ```
 A linear regression of Y on X is then fit to these data. Test:
 (a) normal distribution of residuals;
-- According to Shapiro-Wilk normality test the p-value is 0.1559, meaning that the data are follow a normal distribution.
+- According to Shapiro-Wilk normality test the p-value is 0.1559, meaning that we have no evidence to suggest the data are not follow a normal distribution.
 ```{r}
 reg2 <- lm(crime ~ dipoma, data = crime)
+# rstudent(reg2)
 plot(rstudent(reg2))
 
 attach(crime)
@@ -122,3 +123,4 @@ Try to do as much as you can by hand, without the use of a computer. The numbers
 (a) Plot these data and draw the least squares regression line, which has the expression y = 1 + x.
 (b) Compute all the residuals.
 (c) Compute all sums of squares by hand, from their definitions:
+
