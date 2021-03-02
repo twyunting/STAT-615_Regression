@@ -226,109 +226,23 @@ df_all %>%
 
 df_all 
 ```
+# 2020/01/22 - 2021/01/22
 ```{r}
 df_all %>%
-  filter(case_types == "confirmed_US" & Country_State == "US_Virginia") %>%
-  tail()
-  
-
-df_all %>%
-  filter(case_types == "deaths_US" & Country_State == "US_Virginia")
+  filter(case_types == "confirmed_US" & as_date(Date) <= as_date("2021-01-22") | case_types == "deaths_US" & as_date(Date) <= as_date("2021-01-22")) -> covid
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Analysis Data
-1. Create a data frame by with data grouped by `Country_Region`, `Continent` `case_type`, `rank_p` and `rank_d` that summarizes the current totals and the totals as a percentage of total population.
-  - Be sure to look at how the data is reported so the numbers make sense.
-2. What are the 20 Countries with the most confirmed cases and what is the percentage of their total population affected?
-3. What are the 20 Countries with the most deaths and what is the percentage of their total population affected?
-4. Try to interpret the results by just looking at the rankings for the totals with the rankings for total population and population density.
-- interpretation: Although some countries are large and are not densely populated, they still report many cases on covid-19, such as the US, Brazil, which means it is hard to control covid in large countries even with relatively low population density.
-```{r, warning = FALSE}
-# 1
-df_all %>%
- group_by(Country_Region, Continent, case_types, rank_p, rank_d) %>%
- summarise(ttlCases = max(dailyValues), ttlPerc = ttlCases/last(PopTotal)*100) %>%
-  ungroup() -> tmp
-
-# 2
-## Top 20 Countries with the most confirmed cases and the percentage effects
-tmp %>%
-filter(case_types == "confirmed_global") %>%
-arrange(desc(ttlCases)) %>%
-  head(20) -> confirmed20
-confirmed20
-
-# 3
-## Top 20 Countries with the most died cases and the percentage effects
-tmp %>%
-filter(case_types == "deaths_global") %>%
-  arrange(desc(ttlCases)) %>%
-  head(20) -> deaths20
-deaths20
-```
-
-# Which countries in the top 20 for percentage of population affected are Not in the top 20 for the absolute number of cases and deaths?
-- Try to interpret the results by just looking at the rankings for the totals with the rankings for total population and population density.
-- Interpretation: These countries have low population, so the denominator is small, which brings up the percentage of population affected. On the other hand, the population density is not a critical element with this result.
-**7.10.1:  - 0.25 Did not include other information on ranking in the output**
-**7.10.2:  - 1.5 missing**
 ```{r}
-tmp %>%
-  arrange(desc(ttlPerc)) %>%
-  head(20) -> perc20
+covid %>%
+  filter(case_types == "confirmed_US") %>%
+  nrow()
 
-perc20 %>%
-  # anti_join() return all rows from x without a match in y.
-  anti_join(confirmed20) %>%
-  anti_join(deaths20)
-  # select(Country_Region)
+covid %>%
+  filter(case_types == "deaths_US") %>%
+  nrow()
+
 ```
 
-# Create two plots, one for the number of cases and one for the number of deaths over time for the top 20 country/states faceting by continent. 
-- Use appropriate scales for the axes.
-- Create two sets of plots
-- Interpret each plot.
 
-1. The outbreaks are still in the Americas and Europe. Covid has increased more rapidly around the world since April, and the Coronavirus cases still hit daily high. 
-```{r, fig.width = 6, fig.height = 6}
-confirmed <- confirmed20$Country_Region
 
-df_all %>%
-  filter(case_types == "confirmed_global", Country_State == confirmed) %>%
-  ggplot() +
-  geom_line(mapping = aes(x = Date, y = dailyValues, color = Country_State)) +
-  facet_wrap(~Continent) +
-  scale_y_log10() +
-  theme_bw() +
-  ylab("Cumulative Cases") +
-  ggtitle("The COVID-19 confirmed cases and timeline by Top 20 countries")
-```
-2. Based on the plot of confirmed cases, we can see the deaths have positive association with confirmed cases of covid. It is note worthy that Turkey and Ecuador have a large number of deaths but they don't have high confirmed cases.
-```{r, fig.width = 6, fig.height = 6}
-deaths <- deaths20$Country_Region
 
-df_all %>%
-  filter(case_types == "deaths_global", Country_State == deaths) %>%
-  ggplot() +
-  geom_line(mapping = aes(x = Date, y = dailyValues, color = Country_State)) +
-  facet_wrap(~Continent) +
-  scale_y_log10() +
-  theme_bw() +
-  ylab("Cumulative Deaths") +
-  ggtitle("The COVID-19 deaths and timeline by Top 20 countries")
-```
