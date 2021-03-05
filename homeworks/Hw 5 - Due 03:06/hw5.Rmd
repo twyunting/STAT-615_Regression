@@ -88,7 +88,8 @@ crime %>%
   rename(crime = V1, dipoma = V2) -> crime
 ```
 A linear regression of Y on X is then fit to these data. Test:
-(a) normal distribution of residuals;
+(a) normal distribution of residuals
+
 - According to Shapiro-Wilk normality test the p-value is 0.1559, meaning that we have no evidence to suggest the data are not follow a normal distribution.
 ```{r}
 reg2 <- lm(crime ~ dipoma, data = crime)
@@ -121,6 +122,25 @@ anova(reduced,full)
 5. For the “toy” example, consider a small data set
 Try to do as much as you can by hand, without the use of a computer. The numbers are quite simple!
 (a) Plot these data and draw the least squares regression line, which has the expression y = 1 + x.
-(b) Compute all the residuals.
+
+![](pics/5a.png)
+
+
+(b) Compute all the residuals
+- According to the 5a plot, we can find out $ei$
+
+![](pics/5b.png)
+
 (c) Compute all sums of squares by hand, from their definitions:
+
+![](pics/5c1.png)
+![](pics/5c2.png)
+
+- SSTot = 4.75
+- SSReg = 2.75
+- SSErr = 2
+- SS pure error = 2
+- SS lack of fit = 0
+- SSE = SSPe + SSLof = 2 (degres of freedom = 2)
+- According to [Critical F-value Calculator](https://www.danielsoper.com/statcalc/calculator.aspx?id=4), F-Table for $\alpha$ = 0.05 the F score is 19, F-Table for $\alpha$ = 0.1 the F score is 9 (df1, df2 = 2). We calculate the F score is 1 so we cannot reject the null, meaning that we have no evidence to conclude the model have a lack of fit.
 
