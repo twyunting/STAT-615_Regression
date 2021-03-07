@@ -1,0 +1,80 @@
+---
+title: "Lab 9 # version 1"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# R Lab 9
+
+```{r}
+# read the data from the web
+autompg = read.table(
+  "http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data",
+  quote = "\"",
+  comment.char = "",
+  stringsAsFactors = FALSE)
+# give the dataframe headers
+colnames(autompg) = c("mpg", "cyl", "disp", "hp", "wt", "acc", "year", "origin", "name") # remove missing data, which is stored as "?"
+autompg = subset(autompg, autompg$hp != "?")
+# remove the plymouth reliant, as it causes some issues
+autompg = subset(autompg, autompg$name != "plymouth reliant")
+# give the dataset row names, based on the engine, year and name
+rownames(autompg) = paste(autompg$cyl, "cylinder", autompg$year, autompg$name)
+# remove the variable for name, as well as origin
+autompg = subset(autompg, select = c("mpg", "cyl", "disp", "hp", "wt", "acc", "year")) # change horsepower from character to numeric
+autompg$hp = as.numeric(autompg$hp)
+# check final structure of data
+str(autompg)
+```
+
+```{r}
+head(autompg)
+```
+
+# Task 1
+Use the lm function and provide estimates for b0, b1, b2.
+```{r}
+mpg_model <- lm(mpg ~ wt+year, data = autompg)
+coef(mpg_model) # b0, b1, b2
+```
+
+# Task 2
+```{r}
+n = nrow(autompg)
+p = length(coef(mpg_model))
+X = cbind(rep(1, n), autompg$wt, autompg$year)
+y = autompg$mpg
+
+beta_hat = solve(t(X) %*% X) %*% t(X) %*% y
+beta_hat
+```
+
+# Task 3
+- https://stackoverflow.com/questions/43123462/how-to-obtain-rmse-out-of-lm-result
+```{r}
+# Residual sum of squares
+RSS <- c(crossprod(mpg_model$residuals))
+RSS
+
+# Mean squared error
+MSE <- RSS / length(mpg_model$residuals)
+MSE
+
+# Root MSE
+RMSE <- sqrt(MSE)
+RMSE
+
+```
+
+# Task 4
+The Adjusted R-squared is 0.06476, meaning that after we adjusted the model, we have 80% of variability being explained by the model. The R-squared is how well the regression model fits the observed data.
+```{r}
+summary(mpg_model)
+```
+
