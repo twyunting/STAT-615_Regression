@@ -38,7 +38,7 @@ head(autompg)
 ```
 
 # Task 1
-Use the lm function and provide estimates for b0, b1, b2.
+Use the lm function and provide estimates of $\beta0$, $\beta1$, and $\beta2$.
 ```{r}
 mpg_model <- lm(mpg ~ wt+year, data = autompg)
 coef(mpg_model) # b0, b1, b2
@@ -51,30 +51,30 @@ p = length(coef(mpg_model)) # b0, b1, b2
 X = cbind(rep(1, n), autompg$wt, autompg$year) # x as defined above
 y = autompg$mpg # column vector
 
-beta_hat = solve(t(X) %*% X) %*% t(X) %*% y # solve: a %*% x = b for x, where b can be either a vector or a matrix.
+# solve: a %*% x = b for x, where b can be either a vector or a matrix.
+beta_hat = solve(t(X) %*% X) %*% t(X) %*% y # equation
+# transport  = t(X), solve : find the inverse
 beta_hat
 ```
 
 # Task 3
-- https://stackoverflow.com/questions/43123462/how-to-obtain-rmse-out-of-lm-result
+- In statistics, the residual sum of squares (RSS), also known as the sum of squared residuals (SSR) or the sum of squared estimate of errors (SSE), is the sum of the squares of residuals (deviations predicted from actual empirical values of data).
 ```{r}
-# Residual sum of squares
-RSS <- c(crossprod(mpg_model$residuals))
-RSS
-
-# Mean squared error
-MSE <- RSS / length(mpg_model$residuals)
-MSE
-
-# Root MSE
-RMSE <- sqrt(MSE)
-RMSE
-
+MSE <- sum(residuals(mpg_model)^2)/(n-p) # sum of residual square 
+sqrt(MSE)
+```
+- Second method
+```{r}
+yhat = X %*% solve(t(X) %*% X) %*% t(X) %*% y
+e = y - yhat
+# e
+sqrt(t(e) %*% e / (n-p))
 ```
 
 # Task 4
-The Adjusted R-squared is 0.06476, meaning that after we adjusted the model, we have 80% of variability being explained by the model. The R-squared is how well the regression model fits the observed data.
+The Adjusted R-squared is 0.8082355, meaning that the model has 81% of variability being explained. The observed variation `in miles per gallon` is explained of 81% by the linear relationship with other two predictors (`weight` and `year`.)
 ```{r}
-summary(mpg_model)
+summary(mpg_model)$r.squared
 ```
+
 
