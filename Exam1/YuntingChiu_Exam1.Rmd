@@ -1,0 +1,23 @@
+---
+title: "STAT-615 Regression Exam 1"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Part 2 (80 points): Exercises
+1. (Use R for data analysis)
+The 1974 Motor Trend US magazine contained data on fuel consumption of 32 automobiles (1973-74 models).
+These data are in dataset ‘‘mtcars’’ which is already loaded in R. You can look at it with commands attach(mtcars),
+names(mtcars), summary(mtcars), mtcars. Your task is to study the effect of the number of carburetors (variable
+carb) on the fuel consumption in miles per gallon (variable mpg).
+
+(a) Fit a linear regression model that can be used to predict miles per gallon based on the number of carburetors. Is the number of carburetors significant in this prediction? Report the estimated regression equation, the p-value testing significance of carburetors, and state your conclusion.
+(b) Conduct a lack-of-fit test to decide whether the relation between the fuel consumption and the number of carburetors is linear. State the test statistic, the p-value, and your conclusion. What does this test statistic
+measure?
+(c) Are there any outliers in this regression analysis? Test each residual keeping the familywise error rate at a 5% level. Explain how you did the test, report the numbers that lead to your conclusion.
