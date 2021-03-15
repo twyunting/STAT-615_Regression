@@ -8,6 +8,7 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(car)
 ```
 
 # Part 2 (80 points): Exercises
@@ -16,8 +17,68 @@ The 1974 Motor Trend US magazine contained data on fuel consumption of 32 automo
 These data are in dataset ‘‘mtcars’’ which is already loaded in R. You can look at it with commands attach(mtcars),
 names(mtcars), summary(mtcars), mtcars. Your task is to study the effect of the number of carburetors (variable
 carb) on the fuel consumption in miles per gallon (variable mpg).
+```{r}
+mtcars
+```
 
 (a) Fit a linear regression model that can be used to predict miles per gallon based on the number of carburetors. Is the number of carburetors significant in this prediction? Report the estimated regression equation, the p-value testing significance of carburetors, and state your conclusion.
+- With the p-value 0.001084, we have evidence to reject the null hypothesis in favor of an alternative hypothesis. That is, if the number of carburetors adds one unit, the miles per gallon will decrease by 2.0557 gallons.
+```{r}
+reg <- lm(mpg~carb, data = mtcars) # the fuel consumption in miles per gallon ~ number of carburetors
+summary(reg)
+
+```
+
 (b) Conduct a lack-of-fit test to decide whether the relation between the fuel consumption and the number of carburetors is linear. State the test statistic, the p-value, and your conclusion. What does this test statistic
 measure?
+- reduced model is the usual linear regression model, SSE(Reduced) = 784.27
+- full model is treating `X` as categorical and fitting the mean at each carb. SSE(Full) = 625.49 = SSE(pure error)
+- The lack of fit SSE(lack of fit) = SSE(reduced) - SSE(Full) = 784.27-625.49 = 158.78
+- F = (158.78/4) / (625.49)/26 = 39.695 / 24.05731 = 1.650018
+- We conclude that the p-value is 0.1918, we fail to reject the H0, meaning that there is no evidence of lack of fit. Thus, using the linear regression is almost as good as using separate means at the each level of the number of carburetors. 
+
+```{r}
+reduced <- lm(mpg ~ carb, data = mtcars) # simple linear regression predicting Y in terms of X 
+full <- lm(mpg ~ as.factor(carb), data = mtcars) # using group means to predict Y for each value of X, thus treating X as a categorical variable
+
+anova(reduced, full)
+```
+
 (c) Are there any outliers in this regression analysis? Test each residual keeping the familywise error rate at a 5% level. Explain how you did the test, report the numbers that lead to your conclusion.
+- At the individual level $\alpha$ = 0.05, there is a potential outlier -  observation *Toyota Corolla* with the studentized residual t =  2.169892. Then, keeping the familywise error rate at the same level and using `outlierTest` for testing, 
+
+```{r}
+par(mfrow=c(2,2))
+plot(reg)
+```
+
+```{r}
+# Studentized residuals and testing for outliers
+t <- rstudent(reg)
+par(mfrow=c(1,1)) # Return to the 1x1 plot window 
+# plot(t)
+t[ abs(t) > 2 ]
+n = length(carb)
+qt( 0.025/n, n-2 )
+t[ abs(t) > abs(qt( 0.025/n, n-2 )) ]
+```
+```{r}
+outlierTest(reg)
+```
+
+2. (Use R for data analysis)
+The purpose of this experiment was to assess the influence of calcium in solution on the contraction of heart muscle in rats. The left auricle of 21 rat hearts was isolated and on several occasions a constant length strip of tissue was electrically stimulated and dipped into various concentrations of calcium chloride solution, after which the shortening of the strip was accurately measured as the response.
+
+The data are stored in R package MASS. You can look at them with commands attach(muscle), names(muscle), summary(muscle), muscle. A linear regression model is used to predict the change in length of the strip (variable Length, in mm) based on the concentration of calcium chloride solution (variable Conc, in multiples of 2.2 mM). 
+
+(a) Calculate the equation of the sample regression line that predicts Length based on Conc.
+(b) Complete the ANOVA table and estimate the variance of Length.
+(c) Compute a 95% confidence interval for the regression slope $\beta1$
+(d) Test whether the slope is zero or not.
+(e) Calculate the percent of total variation explained by this regression model.
+(f) Compute a 90% confidence interval for the mean Length when the concentration of calcium is 2.5.
+(g) Compute a 90% prediction interval for Length if the concentration of calcium is 2.5.
+(h) Verify the standard regression assumptions - normality and homoscedasticity. Report p-values and state
+your conclusions.
+(i) (Graduate only) Find the optimal Box-Cox transformation. Does it improve normality of residuals?
+(j) (Graduate only) Test the model for the lack of fit.
