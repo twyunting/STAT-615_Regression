@@ -54,13 +54,13 @@ plot(reg)
 
 ```{r}
 # Studentized residuals and testing for outliers
-t <- rstudent(reg)
-par(mfrow=c(1,1)) # Return to the 1x1 plot window 
+#t <- rstudent(reg)
+#par(mfrow=c(1,1)) # Return to the 1x1 plot window 
 # plot(t)
-t[ abs(t) > 2 ]
-n = length(carb)
-qt( 0.025/n, n-2 )
-t[ abs(t) > abs(qt( 0.025/n, n-2 )) ]
+#t[ abs(t) > 2 ]
+#n = length(carb)
+#qt( 0.025/n, n-2 )
+#t[ abs(t) > abs(qt( 0.025/n, n-2 ))]
 ```
 ```{r}
 outlierTest(reg)
@@ -176,6 +176,11 @@ abline(reduced2,col="red",lwd = 4)
 points(Conc, predict(full2), col="blue", lwd = 10 )
 ```
 ## A rigorous F-test for the lack of fit
+- `reduced2` is the usual linear regression model, SSE(Reduced) = 784.27
+- `full2` is treating `X` as categorical and fitting the mean at each carb. SSE(Full) = 625.49 = SSE(pure error)
+- The lack of fit SSE(lack of fit) = SSE(reduced) - SSE(Full) = 784.27-625.49 = 158.78
+- F = (158.78/4) / (625.49)/26 = 39.695 / 24.05731 = 1.650018
+- We conclude that the p-value is 0.1918, we fail to reject the H0, meaning that there is no evidence of lack of fit. Thus, using the linear regression is almost as good as using separate means at the each level of the number of carburetors. 
 ```{r}
 anova(reduced2, full)
 ```
