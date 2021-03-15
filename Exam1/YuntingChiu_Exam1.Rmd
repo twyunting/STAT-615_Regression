@@ -70,11 +70,37 @@ outlierTest(reg)
 The purpose of this experiment was to assess the influence of calcium in solution on the contraction of heart muscle in rats. The left auricle of 21 rat hearts was isolated and on several occasions a constant length strip of tissue was electrically stimulated and dipped into various concentrations of calcium chloride solution, after which the shortening of the strip was accurately measured as the response.
 
 The data are stored in R package MASS. You can look at them with commands attach(muscle), names(muscle), summary(muscle), muscle. A linear regression model is used to predict the change in length of the strip (variable Length, in mm) based on the concentration of calcium chloride solution (variable Conc, in multiples of 2.2 mM). 
-
+```{r}
+library(MASS)
+muscle
+```
 (a) Calculate the equation of the sample regression line that predicts Length based on Conc.
+- According to the summary table below, we focus on $\beta1$. If the concentration of calcium add one unit, the change in length of the strip will increase 5.4030 mm.
+```{r}
+reg2 <- lm(Length~Conc, data = muscle)
+summary(reg2)
+```
+
 (b) Complete the ANOVA table and estimate the variance of Length.
+- At the $\alpha$ - 0.05, we set H0: $\beta1$ = 0 v.s. H:a $\beta1$ != 0.
+- We tested the F-value is 49.847. However, in the significant level t$\alpha$ - 0.05, the F-stat is 4.006873. 
+- Because 49.847 > 4.006873 so p-value is less than 0.05, the H0 can be rejected, meaning that the linear relation between `Conc`and `Length` are found significant.
+```{r}
+anova(reg2)
+qf(0.95, df1 = 1, df2 = 58)
+```
+
 (c) Compute a 95% confidence interval for the regression slope $\beta1$
+- The 95% confidence interval for the slope (5.4030) is between 3.871132 to 6.934835
+```{r}
+confint(reg2, "Conc", level = 0.95)
+```
+
 (d) Test whether the slope is zero or not.
+```{r}
+
+```
+
 (e) Calculate the percent of total variation explained by this regression model.
 (f) Compute a 90% confidence interval for the mean Length when the concentration of calcium is 2.5.
 (g) Compute a 90% prediction interval for Length if the concentration of calcium is 2.5.
