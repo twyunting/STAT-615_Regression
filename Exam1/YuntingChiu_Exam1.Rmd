@@ -45,7 +45,7 @@ anova(reduced, full)
 ```
 
 (c) Are there any outliers in this regression analysis? Test each residual keeping the familywise error rate at a 5% level. Explain how you did the test, report the numbers that lead to your conclusion.
-- At the individual level $\alpha$ = 0.05, there is a potential outlier -  observation *Toyota Corolla* with the studentized residual t =  2.169892. Then, keeping the familywise error rate at the same level and using `outlierTest` for testing, 
+- At the individual level $\alpha$ = 0.05, there is a potential outlier - observation *Toyota Corolla* with the studentized residual t =  2.169892. Then, keeping the familywise error rate at the same level and using `outlierTest` for testing, 
 
 ```{r}
 par(mfrow=c(2,2))
@@ -97,14 +97,86 @@ confint(reg2, "Conc", level = 0.95)
 ```
 
 (d) Test whether the slope is zero or not.
+- The p-value of slope $\beta1$ was found significant in the summary table (p-value: 2.32e-09). That is, the slope is not equal to zero.
+
+(e) Calculate the percent of total variation explained by this regression model.
+- The r-square is 0.4622014, so the linear regression model has 46 % of the variance for a dependent variable `Length` that's explained by an independent variable `Conc` in the regression model.
+```{r}
+summary(reg2)$r.square
+```
+
+(f) Compute a 90% confidence interval for the mean Length when the concentration of calcium is 2.5.
+```{r}
+muscle %>%
+  filter(Conc == 2.5) -> tmpDf
+# Confidence intervals for regression coefficients
+confint(reg2, level = 0.9)
+```
+
+(g) Compute a 90% prediction interval for Length if the concentration of calcium is 2.5.
 ```{r}
 
 ```
 
-(e) Calculate the percent of total variation explained by this regression model.
-(f) Compute a 90% confidence interval for the mean Length when the concentration of calcium is 2.5.
-(g) Compute a 90% prediction interval for Length if the concentration of calcium is 2.5.
 (h) Verify the standard regression assumptions - normality and homoscedasticity. Report p-values and state
 your conclusions.
-(i) (Graduate only) Find the optimal Box-Cox transformation. Does it improve normality of residuals?
+
+Here are the assumptions of simple linear regression model:
+1. independent observation
+2. Normally distribution
+3. Equal variances
+4. No influential outliers
+5. Linear association between (mean) y and x. That is, residual : ri = yi - yhat i.
+## Normality - using Normal Q-Q plot
+- According to the normal QQ plot, there are some potential outliers in the upper extremity and lower extremity
+```{r}
+par(mfrow=c(2,2))
+plot(reg2)
+```
+## Normality - Shapiro-Wilk normality test
+- With large p-value 0.07566, we fail to reject the null, meaning that the data may not be non-normal.
+```{r}
+t <- rstudent(reg2)
+shapiro.test(t)
+```
+## Homoscedasticity (constant variance)
+- With a high p-value 0.57094,there is no evidence of non-constant variance.
+```{r}
+ncvTest(reg2)
+```
+
+(i) **(Graduate only)** Find the optimal Box-Cox transformation. Does it improve normality of residuals?
+- A Box Cox transformation is a transformation of a non-normal dependent variables into a normal shape. In this case, we need to focus on **the largest Y-value** mapping to the X position. Thus, the optimal lambda
+is somewhere between 1 to 2. Then, we zoom in the 1:2 domain with the step 0.01
+```{r}
+boxcox(reg2)
+```
+- Now, we can see that the best lambda is approximately close to 1.4 on x-axis (the peak spot). Let’s introduce a variable that is the corresponding power transform of our response Y, fit this new regression, and check residuals for
+normality.
+```{r}
+boxcox(reg2, lambda = seq(1, 2, 0.01))
+```
+- Recalled: the normality test p-value of original model is **0.07566**
+- According to the Shapiro-Wilk normality test table below, the p-value is **0.1533**
+- Because 0.1533 > 0.07566, also the p-value is far away to the $\alpha$ level. We can conclude that the Box-Cox transformation improves residual normality.
+```{r}
+attach(muscle)
+z <- Length^(1.4)
+newReg2 <- lm(z~Conc)
+shapiro.test(rstudent(newReg2))
+```
+
 (j) (Graduate only) Test the model for the lack of fit.
+```{r}
+reduced2 <- lm(Length ~ Conc, data = muscle)
+full2 <- lm(Length ~ as.factor(Conc), data = muscle)
+
+plot(Conc, Length)
+abline(reduced2,col="red",lwd = 4)
+points(Conc, predict(full2), col="blue", lwd = 10 )
+```
+## A rigorous F-test for the lack of fit
+```{r}
+anova(reduced2, full)
+```
+
