@@ -106,16 +106,16 @@ summary(reg2)$r.square
 ```
 
 (f) Compute a 90% confidence interval for the mean Length when the concentration of calcium is 2.5.
+- 90% confidence interval for `Length` expected values at `Conc` = 2.5 is:
 ```{r}
-muscle %>%
-  filter(Conc == 2.5) -> tmpDf
-# Confidence intervals for regression coefficients
-confint(reg2, level = 0.9)
+# muscle 
+predict(reg2, data.frame(Conc = 2.5), interval = "confidence", level = 0.90)
 ```
 
 (g) Compute a 90% prediction interval for Length if the concentration of calcium is 2.5.
+- 90% prediction interval for `Length` expected values at `Conc` = 2.5 is:
 ```{r}
-
+predict(reg2, data.frame(Conc = 2.5), interval = "prediction", level = 0.90)
 ```
 
 (h) Verify the standard regression assumptions - normality and homoscedasticity. Report p-values and state
@@ -176,12 +176,12 @@ abline(reduced2,col="red",lwd = 4)
 points(Conc, predict(full2), col="blue", lwd = 10 )
 ```
 ## A rigorous F-test for the lack of fit
-- `reduced2` is the usual linear regression model, SSE(Reduced) = 784.27
-- `full2` is treating `X` as categorical and fitting the mean at each carb. SSE(Full) = 625.49 = SSE(pure error)
-- The lack of fit SSE(lack of fit) = SSE(reduced) - SSE(Full) = 784.27-625.49 = 158.78
-- F = (158.78/4) / (625.49)/26 = 39.695 / 24.05731 = 1.650018
-- We conclude that the p-value is 0.1918, we fail to reject the H0, meaning that there is no evidence of lack of fit. Thus, using the linear regression is almost as good as using separate means at the each level of the number of carburetors. 
+- `reduced2` is the usual linear regression model, SSE(Reduced) = 2383.7 
+- `full2` is treating `X` as categorical and fitting the mean at each `Y`. SSE(Full) = 1237.5 = SSE(pure error)
+- The lack of fit SSE(lack of fit) = SSE(reduced) - SSE(Full) = 2383.7-1237.5 = 1146.2
+- F = 12.504
+- With the small p-value 2.873e-07, there is evidence of lack of fit. 
 ```{r}
-anova(reduced2, full)
+anova(reduced2, full2)
 ```
 
