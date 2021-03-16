@@ -12,6 +12,32 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(car)
 ```
+# Part 1 (20 points): Concept problems
+### True or False. Justify your answer
+
+1. The sum of the residuals is equal to zero.\
+**Answer: True**
+- Half of the residuals will equal exactly half of the remaining residuals. Half are positive, half are negative, and they eliminate each other out.
+2. A significant positive correlation between X and Y implies that changes in X cause Y to change.\
+**Answer:**
+3. The residual is the difference between the observed value of the dependent variable and the predicted value of the dependent variable. In mathematical notation this is given by $Y - E\{Y\}$.\
+**Answer:**
+4. If MSR and MSE are of the same order of magnitude, this would suggest that $\beta1 \neq 0$.\
+**Answer:**
+5. When using simple regression analysis, if there is a strong correlation between the independent and
+dependent variable, then we can conclude that an increase in the value of the independent variable causes an increase in the value of the dependent variable.\
+**Answer:**
+6. The least squares regression line minimizes the sum of the squared differences between actual and
+predicted Y values.\
+**Answer:**
+7. The correlation coefficient takes values between 0 and 1.\
+**Answer:**
+8. The coefficient of determination is interpreted as the proportion of observed variation in X that can be explained by the simple linear regression model.\
+**Answer:**
+9. One way to study the normality of the error is by histograms.\
+**Answer:**
+10. Draw a fitted versus residuals plot where we see that the constant variance assumption is not met and the linearity assumption is not violated.\
+**Answer:**
 
 # Part 2 (80 points): Exercises
 1. (Use R for data analysis)
@@ -25,11 +51,12 @@ mtcars
 
 (a) Fit a linear regression model that can be used to predict miles per gallon based on the number of carburetors. Is the number of carburetors significant in this prediction? Report the estimated regression equation, the p-value testing significance of carburetors, and state your conclusion.
 - With the p-value 0.001084, we have evidence to reject the null hypothesis in favor of an alternative hypothesis. That is, if the number of carburetors adds one unit, the miles per gallon will decrease by 2.0557 gallons.
-- Equation: mpg = 25.8723 - 2.0557carb
+$$
+mpg = 25.8723 - 2.0557carb
+$$
 ```{r}
 reg <- lm(mpg~carb, data = mtcars) # the fuel consumption in miles per gallon ~ number of carburetors
 summary(reg)
-
 ```
 
 (b) Conduct a lack-of-fit test to decide whether the relation between the fuel consumption and the number of carburetors is linear. State the test statistic, the p-value, and your conclusion. What does this test statistic
@@ -79,7 +106,10 @@ muscle
 ```
 (a) Calculate the equation of the sample regression line that predicts Length based on Conc.
 - According to the summary table below, we focus on $\beta1$. If the concentration of calcium add one unit, the change in length of the strip will increase 5.4030 mm.
-- Equation: Length = 13.5330 + 5.4030*Conc
+$$
+Length = 13.5330 + 5.4030*Conc
+$$
+
 ```{r}
 reg2 <- lm(Length~Conc, data = muscle)
 summary(reg2)
@@ -145,8 +175,10 @@ plot(reg2)
 ## Normality - Shapiro-Wilk normality test
 - With large p-value 0.07566, we fail to reject the null, meaning that the data may not be non-normal.
 ```{r}
-t <- rstudent(reg2)
-shapiro.test(t)
+tReg2 <- rstudent(reg2)
+par(mfrow=c(1,1)) # Return to the 1x1 plot window
+plot(t)
+shapiro.test(tReg2)
 ```
 ## Homoscedasticity (constant variance)
 - With a high p-value 0.57094,there is no evidence of non-constant variance.
@@ -174,13 +206,20 @@ spot
 
 - Recalled: the normality test p-value of original model is **0.07566**
 - According to the Shapiro-Wilk normality test table below, the p-value is **0.1378**
-- Because 0.1378 > 0.07566, also the p-value is far away to the $\alpha$ level. We can conclude that the Box-Cox transformation improves residual normality.
+- Because 0.1378 > 0.07566, also the p-value is far away to the $\alpha$ level. Also, the below residual plot indicates that the Box-Cox transformation improves residual normality.
 ```{r}
 attach(muscle)
 z <- Length^(1.353535)
 newReg2 <- lm(z~Conc)
 shapiro.test(rstudent(newReg2))
 ```
+
+```{r}
+tNewReg2 <- rstudent(newReg2)
+par(mfrow=c(1,1)) # Return to the 1x1 plot window
+plot(tNewReg2)
+```
+
 
 (j) (Graduate only) Test the model for the lack of fit.
 ```{r}

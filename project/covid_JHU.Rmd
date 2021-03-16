@@ -234,15 +234,28 @@ df_all %>%
 
 ```{r}
 covid %>%
-  filter(case_types == "confirmed_US") %>%
-  nrow()
+  filter(case_types == "confirmed_US"& Country_State == "US_Maryland") %>%
+  head()
 
 covid %>%
   filter(case_types == "deaths_US") %>%
   nrow()
 
+covid %>%
+  filter(case_types == "confirmed_US" & Country_State == "US_Maryland" & as_date(Date) == as_date("2021-01-22"))
 ```
 
+```{r}
+#covid %>%
+  #write_excel_csv("covidJHU.csv")
+```
+
+
+
+```{r}
+covid %>%
+  
+```
 
 
 
