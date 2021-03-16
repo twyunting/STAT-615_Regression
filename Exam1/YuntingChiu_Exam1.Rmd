@@ -23,6 +23,7 @@ mtcars
 
 (a) Fit a linear regression model that can be used to predict miles per gallon based on the number of carburetors. Is the number of carburetors significant in this prediction? Report the estimated regression equation, the p-value testing significance of carburetors, and state your conclusion.
 - With the p-value 0.001084, we have evidence to reject the null hypothesis in favor of an alternative hypothesis. That is, if the number of carburetors adds one unit, the miles per gallon will decrease by 2.0557 gallons.
+- Equation: mpg = 25.8723 - 2.0557carb
 ```{r}
 reg <- lm(mpg~carb, data = mtcars) # the fuel consumption in miles per gallon ~ number of carburetors
 summary(reg)
@@ -74,6 +75,7 @@ muscle
 ```
 (a) Calculate the equation of the sample regression line that predicts Length based on Conc.
 - According to the summary table below, we focus on $\beta1$. If the concentration of calcium add one unit, the change in length of the strip will increase 5.4030 mm.
+- Equation: Length = 13.5330 + 5.4030Conc
 ```{r}
 reg2 <- lm(Length~Conc, data = muscle)
 summary(reg2)
@@ -188,14 +190,25 @@ A sample of size n = 100 contains two variables, X and Y . Sample statistics are
 S_X = 10, S_Y = 4, r_XY = 0.2.
 
 (a) Calculate the equation of the sample regression line that predicts Y based on X.
+Predicted values: 
+$$
+\hat{Yi} = b_0 + b_1 * X_i 
+$$
+$$
+\hat{Yi} = 6 + 0.08 * X_i
+$$
 
-(b) Complete the ANOVA table and estimate the variance of Y .
+(b) Complete the ANOVA table and estimate the variance of Y.
+
 Include sum of squares, degrees of freedom, mean squares and the ANOVA F-statistic.
+
 (c) Compute a 95% confidence interval for the regression slope $\beta1$.
 (d) Test whether the slope is zero or not.
 (e) Calculate the percent of total variation explained by this regression model.
 (f) Compute a 90% confidence interval for the mean response when $X$ = 35.
-(g) Compute a 90% prediction interval for the response Y0 if the corresponding independent variable is $X_0$ = 35
+(g) Compute a 90% prediction interval for the response $Y_0$ if the corresponding independent variable is $X_0$ = 35
 
 References:
 - http://www.r-tutor.com/elementary-statistics/numerical-measures/correlation-coefficient#:~:text=The%20correlation%20coefficient%20of%20two,the%20two%20are%20linearly%20related.
+- https://web.njit.edu/~wguo/Math644_2012/Math644_Chapter%201_part2.pdf
+- 
