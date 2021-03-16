@@ -45,23 +45,20 @@ anova(reduced, full)
 ```
 
 (c) Are there any outliers in this regression analysis? Test each residual keeping the familywise error rate at a 5% level. Explain how you did the test, report the numbers that lead to your conclusion.
-- At the individual level $\alpha$ = 0.05, there is a potential outlier - observation *Toyota Corolla* with the studentized residual t =  2.169892. Then, keeping the familywise error rate at the same level and using `outlierTest` for testing, 
+- At the individual level $\alpha$ = 0.05, there is a potential outlier - observation *Toyota Corolla* with the studentized residual t =  2.169892. Then, keeping the familywise error rate at the same level and using `outlierTest` for testing.
 
-```{r}
-par(mfrow=c(2,2))
-plot(reg)
-```
-
+- The test provided no outiers
 ```{r}
 # Studentized residuals and testing for outliers
-#t <- rstudent(reg)
-#par(mfrow=c(1,1)) # Return to the 1x1 plot window 
-# plot(t)
-#t[ abs(t) > 2 ]
-#n = length(carb)
-#qt( 0.025/n, n-2 )
-#t[ abs(t) > abs(qt( 0.025/n, n-2 ))]
+t <- rstudent(reg)
+par(mfrow=c(1,1)) # Return to the 1x1 plot window 
+plot(t)
+t[ abs(t) > 2 ]
+n = length(carb)
+qt( 0.025/n, n-2 ) # -3.478736
+t[ abs(t) > abs(qt( 0.025/n, n-2 ))]
 ```
+ According to the `outlierTest` table, the Bonferroni p-value for the largest (absolute) residual is not statistically significant, which means there are no outliers.
 ```{r}
 outlierTest(reg)
 ```
