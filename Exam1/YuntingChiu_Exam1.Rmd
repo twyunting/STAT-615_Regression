@@ -18,26 +18,44 @@ library(car)
 1. The sum of the residuals is equal to zero.\
 **Answer: True**
 - Half of the residuals will equal exactly half of the remaining residuals. Half are positive, half are negative, and they eliminate each other out.
+
 2. A significant positive correlation between X and Y implies that changes in X cause Y to change.\
-**Answer:**
+**Answer: False**
+- The strength of the linear association is measured by correlation. `r` is always a number between -1 and 1. If r is close to 0, it means there is no relationship between the variables (1 means prefect positive correlation; -1 means prefect negative correlation).
+
 3. The residual is the difference between the observed value of the dependent variable and the predicted value of the dependent variable. In mathematical notation this is given by $Y - E\{Y\}$.\
-**Answer:**
+**Answer: True**
+- The difference between the observed Y and the predicted Y ($Y-\hat{Y}$) is called a residual.
+
 4. If MSR and MSE are of the same order of magnitude, this would suggest that $\beta1 \neq 0$.\
-**Answer:**
+**Answer: False**
+- If the MSE and the MSR are of the same order of magnitude, this suggests that $\beta1 = 0$. If the MSR is significantly greater than the MSE, this suggests that $\beta1 \neq 0$.
+
 5. When using simple regression analysis, if there is a strong correlation between the independent and
 dependent variable, then we can conclude that an increase in the value of the independent variable causes an increase in the value of the dependent variable.\
-**Answer:**
+**Answer: False**
+- We need to focus on $\beta1$ to know the association between independent variable and dependent variable.
+
 6. The least squares regression line minimizes the sum of the squared differences between actual and
 predicted Y values.\
 **Answer:**
+- 
+
 7. The correlation coefficient takes values between 0 and 1.\
 **Answer:**
+- 
+
 8. The coefficient of determination is interpreted as the proportion of observed variation in X that can be explained by the simple linear regression model.\
 **Answer:**
+- 
+
 9. One way to study the normality of the error is by histograms.\
 **Answer:**
+- 
+
 10. Draw a fitted versus residuals plot where we see that the constant variance assumption is not met and the linearity assumption is not violated.\
 **Answer:**
+- 
 
 # Part 2 (80 points): Exercises
 1. (Use R for data analysis)
@@ -75,7 +93,7 @@ anova(reduced, full)
 ```
 
 (c) Are there any outliers in this regression analysis? Test each residual keeping the familywise error rate at a 5% level. Explain how you did the test, report the numbers that lead to your conclusion.
-- At the individual level $\alpha$ = 0.05, there is a potential outlier - observation *Toyota Corolla* with the studentized residual t =  2.169892.Then, keeping the familywise error rate at the same level and using `outlierTest` for testing.
+- At the individual level $\alpha$ = 0.05, there is a potential outlier - observation *Toyota Corolla* with the studentized residual t =  2.169892. Then, we are going to keep the familywise error rate at the same level and using `outlierTest` for testing.
 
 - The test provided no outiers
 ```{r}
@@ -90,7 +108,8 @@ n = length(carb)
 qt( 0.025/n, n-2 ) # -3.478736
 t[ abs(t) > abs(qt( 0.025/n, n-2 ))]
 ```
-- According to the `outlierTest` table, the Bonferroni p-value for the largest (absolute) residual is not statistically significant, which means there are no outliers.
+- According to [Quantitative Research Methods for Political Science, Public Policy and Public Administration for Undergraduates](https://bookdown.org/wwwehde/qrm_textbook_updates/ols-assumptions-and-simple-regression-diagnostics.html), they indicate the `outlierTest` is: " The Bonferroni Outlier Tests uses a t distribution to test whether the model’s largest studentized residual value’s outlier status is statistically different from the other observations in the model. A significant p-value indicates an extreme outlier that warrants further examination."
+- According to the conclusion of the `outlierTest`, the Bonferroni p-value for the largest (absolute) residual is not statistically significant (No Studentized residuals with Bonferroni p < 0.05). Thus, There is no evidence of any outliers.
 - Reference: https://bookdown.org/wwwehde/qrm_textbook_updates/ols-assumptions-and-simple-regression-diagnostics.html
 ```{r}
 outlierTest(reg)
