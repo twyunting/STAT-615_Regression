@@ -101,7 +101,20 @@ summary(reg)$r.square
 ```{r}
 summary(reg)$adj.r.square
 ```
+- Reference: https://discuss.analyticsvidhya.com/t/difference-between-r-square-and-adjusted-r-square/264/2
 
 (h) Calculate the squared correlation coefficient between $Yi$ and $\hat{Y}$. Compare with part (g).
-(i) Obtain a 99% confidence interval for E(Y ) when X1 = 5 and X2 = 4. Interpret it.
+- The squared correlation coefficient between $Yi$ and $\hat{Y}$ is $R^2$, which is 0.952059.
+
+(i) Obtain a 99% confidence interval for E(Y) when X1 = 5 and X2 = 4. Interpret it.
+- We have 99 % confidence to conclude that the **mean** of `degree of brand liking` is between 73.88111 to 80.66889 when the `moisture content` is 5 and the `sweetness of the product` is 4.
+```{r}
+predict(reg, tibble(moisture = 5, sweetness = 4), interval = "confidence", level = 0.99)
+```
+
 (j) Obtain a 99% prediction interval for a new observation Y when X1 = 5 and X2 = 4. Interpret it.
+- We have 99 % confidence to conclude that **a next new observation ** of `degree of brand liking` is between 73.88111 to 80.66889 when the `moisture content` is 5 and the `sweetness of the product` is 4.
+```{r}
+predict(reg, tibble(moisture = 5, sweetness = 4), interval = "prediction", level = 0.99)
+```
+
