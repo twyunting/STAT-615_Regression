@@ -62,7 +62,7 @@ ncvTest(reg)
 ```
 
 (d) Conduct a formal lack of fit test. 
-- We conclude that the p-value is 0.3843, we fail to reject the H0, meaning that there is no evidence of lack of fit. Thus, there should be no significant difference in error between estimates from the reduce model and the full model.
+- We conclude that the p-value is 0.3843, we fail to reject the H0, meaning that there is no evidence of lack of fit. Thus, there should be no significant difference in error between estimates from the reduced (`reg`) model and the full model.
 - Reference: https://stats.stackexchange.com/questions/339331/difference-between-full-model-and-reduced-model-in-one-way-anova
 $$
 Full Model: Y_{ij} = \mu_j + e_{ij}
@@ -76,11 +76,29 @@ anova(reg, full)
 ```
 
 (e) Test whether the proposed linear regression model is significant. What do the results of the ANOVA F-test imply about the slopes?
-- 
+- Let we set H0: $\beta1 = \beta2 = 0$ vs Ha: $\beta1 = \beta2 \neq0$.
+- We found both p-values ($\beta1$ and $\beta2$) are smaller than significant level, implying that we are in favor of Ha.
 ```{r}
+anova(reg)
 summary(reg)
 ```
 
 (f) Estimate both slopes simultaneously using the Bonferroni procedure with at least a 99 percent confidence level.
+- The Bonferroni test is a statistical test used to reduce the instance of a false positive (typr 1 error)
+- To preform the Bonferroni correction, we need to divide the $\alpha$ level by the number of tests that being executed.
+- We need to test 2 slopes, and the significance level is 0.01. So, 0.01/2 = 0.005. Throughout the Bonferroni procedure, the adjusted $alpha$ level is 0.005 with two slopes.
+- Reference: https://toptipbio.com/bonferroni-correction-method/
+```{r}
+confint(reg, level = (1-0.005))
+```
+
 (g) Report R2 and adjusted R2. How are they interpreted here?
+
+```{r}
+summary(reg)$r.square
+summary(reg)$adj.r.square
+```
+
 (h) Calculate the squared correlation coefficient between $Yi$ and $\hat{Y}$. Compare with part (g).
+(i) Obtain a 99% confidence interval for E(Y ) when X1 = 5 and X2 = 4. Interpret it.
+(j) Obtain a 99% prediction interval for a new observation Y when X1 = 5 and X2 = 4. Interpret it.
