@@ -19,9 +19,85 @@ $R^2$, so we should include all available predictor variables in the model.” C
 although we do so for the coefficient of simple correlation $r_{12}$?
 - The range of simple correlation coefficient is -1 to 1. The multiple correlation shows how any variable can be predicted by using a set of other variables. There will be several independent variables, each of which will have a different effect. The multiple correlation coefficient will be more complicated than the simple one because the range is not limited to -1 to 1.
 
-3. (**6.27**) 
-4. (Computer project, **#6.5—#6.8**) Dataset “Brand preference” is available on our Blackboard, on http://statweb.lsu.edu/EXSTWeb/StatLab/DataSets/NKNWData/CH06PR05.txt,
-and here:
+3. (**6.27**) In a small-scale regression study, the following data were obtained,
+
+|Y    |     X1   |    X2|
+|:--------|:------:|--------:|
+|42.0 |7.0| 33.0|
+|33.0 |4.0 |41.0|
+|75.0| 16.0| 7.0|
+|28.0| 3.0| 49.0|
+|91.0 |21.0 |5.0|
+|55.0| 8.0 |31.0|
+
+Assume the standard multiple regression model with independent normal error terms. Compute **b, e, H,** SSErr, $R^2$, $s^2_b$, $\hat{Y}$ for $X1$ = 10, $X2$ = 30. You can do the computations using software or by hand, although it would be lengthy to do them by hand.
+- The first column is `scalar` (1, 1, 1, 1, 1, 1)
+```{r}
+scalar <- c(1, 1, 1, 1, 1, 1)
+Y <-  c(42, 33, 75, 28, 91, 55)
+X1 <-  c(7, 4, 16, 3, 21, 8)
+X2 <-  c(33, 41, 7, 49, 5, 31)
+
+# namely X is the matrix
+X <- matrix(c(scalar, X1, X2), 6, 3, byrow = FALSE)
+X
+```
+
+## b: slope
+$$
+\boldsymbol{\hat{\beta}} = \boldsymbol{(X^TX)}^{-1}\boldsymbol{(X^TY)}
+$$
+
+```{r}
+library(matlib)
+b = inv(t(X) %*% X) %*% t(X) %*% Y
+b
+```
+## H: Hat 
+- H is called the hat-matrix (because it transforms $y$ to $\hat{y}$)
+$$
+H = X\boldsymbol{(X^TX)}^{-1}\boldsymbol{X^T}
+$$
+```{r}
+H = X %*% inv(t(X) %*% X) %*% t(X)
+H
+```
+
+
+## e: resuduals
+$$
+e = Y -\hat{Y} = Y - H * Y
+$$
+```{r}
+e <- Y - H %*% Y
+e
+```
+## SSErr
+- **SSErr** is error sum of squares. 
+```{r}
+SSErr <- sum(e^2)
+SSErr
+```
+
+##$R^2$
+```{r}
+
+```
+
+##$s^2_b$
+```{r}
+
+```
+
+## E{Y|X1 = 10, X2 = 30}
+
+
+- Reference: 
+  + https://stats.stackexchange.com/questions/352130/converting-the-beta-coefficient-from-matrix-to-scalar-notation-in-ols-regression
+  + https://www.stat.cmu.edu/~cshalizi/mreg/15/lectures/13/lecture-13.pdf
+  + http://fs2.american.edu/baron/www/Handouts/review%20-%20regression.pdf
+
+4. (Computer project, **#6.5—#6.8**) Dataset “Brand preference” is available on our Blackboard, on http://statweb.lsu.edu/EXSTWeb/StatLab/DataSets/NKNWData/CH06PR05.txt, and here:
 ```{r}
 brand <- read.table("./data/CH06PR05.txt")
 brand %>%
