@@ -93,9 +93,12 @@ confint(reg, level = (1-0.005))
 ```
 
 (g) Report R2 and adjusted R2. How are they interpreted here?
-
+- It means that 95 % of the variation in the `brand` is explained by the `moisture` and `sweetness` independent variables.
 ```{r}
 summary(reg)$r.square
+```
+- It means that 94 % of the variation in the `brand` is explained by model addition that are significant of `moisture` and `sweetness`.
+```{r}
 summary(reg)$adj.r.square
 ```
 
