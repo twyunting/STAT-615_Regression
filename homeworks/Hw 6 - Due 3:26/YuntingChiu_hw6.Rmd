@@ -1,0 +1,20 @@
+---
+title: "Homework 6"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: blue
+linkcolor: red
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+1. (6.3) A student stated: “Adding predictor variables to a regression model can never reduce
+$R^2$, so we should include all available predictor variables in the model.” Comment.
+- Not really. If the model have a bigger $R^2$ value, which means the fitter is better. However, better fitting does not necessarily imply the fitted model is a useful one.
+
+2. (6.4) Why is it not meaningful to attach a sign to the coefficient of multiple correlation R,
+although we do so for the coefficient of simple correlation $r_12$?
+- 
