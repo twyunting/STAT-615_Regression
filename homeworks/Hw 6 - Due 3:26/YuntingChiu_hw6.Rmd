@@ -31,6 +31,7 @@ although we do so for the coefficient of simple correlation $r_{12}$?
 |55.0| 8.0 |31.0|
 
 Assume the standard multiple regression model with independent normal error terms. Compute **b, e, H,** SSErr, $R^2$, $s^2_b$, $\hat{Y}$ for $X1$ = 10, $X2$ = 30. You can do the computations using software or by hand, although it would be lengthy to do them by hand.
+
 - The first column is `scalar` (1, 1, 1, 1, 1, 1)
 ```{r}
 scalar <- c(1, 1, 1, 1, 1, 1)
@@ -85,7 +86,7 @@ SSE
 # SSErr
 ```
 
-##$R^2$
+## **$R^2$**
 $$
 R^2 = \frac{SSRegression}{SSTotal} = 1 - \frac{SSError}{SSTotal}
 $$
@@ -96,7 +97,7 @@ R2 <- 1 - SSE/SST # R^2
 R2
 ```
 
-## $s^2_b$
+## **$s^2_b$**
 $$
 MSE = \frac{SSE}{n-2}
 $$
