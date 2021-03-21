@@ -227,3 +227,23 @@ predict(reg, tibble(moisture = 5, sweetness = 4), interval = "confidence", level
 predict(reg, tibble(moisture = 5, sweetness = 4), interval = "prediction", level = 0.99)
 ```
 
+5. (**# 6.26, Stat-615 only**) Show that the squared sample correlation coefficient between $Y$
+and $\hat Y$ equals $R^2$.
+
+Remark. Now you can check if you did #3h correctly.\
+Hints. First, show that the sample averages of Yi and Ybi are the same. Then, write the sample correlation coefficient between $Y$ and $\hat Y$ as
+ \[
+ r_{Y\widehat{Y}} = \frac{\sum
+ (Y_i-\overline{Y})(\widehat{Y}_i-\overline{Y})}{\sqrt{\sum
+ (Y_i-\overline{Y})^2\sum(\widehat{Y}_i-\overline{Y})^2}}
+ = \frac{\sum
+ (\widehat{Y}_i-\overline{Y}+Y_i-\widehat{Y}_i)(\widehat{Y}_i-\overline{Y})}{\sqrt{\sum
+ (Y_i-\overline{Y})^2\sum(\widehat{Y}_i-\overline{Y})^2}}
+ \]
+ and use known properties of residuals $\sum e_i=0$, $\sum X_{ij} e_i=0$, $\sum \widehat{Y}_i e_i=0$.
+ }}
+
+![](q6/6.png)
+
+- Reference: https://stats.stackexchange.com/questions/187734/relationship-between-r2-and-correlation-coefficient
+

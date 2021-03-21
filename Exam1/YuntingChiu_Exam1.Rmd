@@ -49,6 +49,7 @@ predicted Y values.\
 **Answer: False**
 - In statistics, the coefficient of determination, denoted $R^2$
 - R-squared gives us the percentage variation in y explained by x-variable
+- The usual way of interpreting the coefficient of determination R^2 is to see it as the percentage of the variation of the dependent variable y (Var(y)) can be explained by our model.
 
 9. One way to study the normality of the error is by histograms.\
 **Answer: True**
