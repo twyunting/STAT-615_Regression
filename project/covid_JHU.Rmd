@@ -228,7 +228,7 @@ df_all
 ```
 # 2020/01/22 - 2021/01/22 
 ```{r}
-# extract 
+# extract one year
 df_all %>%
   filter(case_types == "confirmed_US" & as_date(Date) <= as_date("2021-01-22") | case_types == "deaths_US" & as_date(Date) <= as_date("2021-01-22")) -> covid
 ```
