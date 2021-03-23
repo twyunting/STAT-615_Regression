@@ -226,8 +226,9 @@ df_all %>%
 
 df_all 
 ```
-# 2020/01/22 - 2021/01/22
+# 2020/01/22 - 2021/01/22 
 ```{r}
+# extract 
 df_all %>%
   filter(case_types == "confirmed_US" & as_date(Date) <= as_date("2021-01-22") | case_types == "deaths_US" & as_date(Date) <= as_date("2021-01-22")) -> covid
 ```
@@ -239,23 +240,60 @@ covid %>%
 
 covid %>%
   filter(case_types == "deaths_US") %>%
-  nrow()
+  tail()
 
 covid %>%
   filter(case_types == "confirmed_US" & Country_State == "US_Maryland" & as_date(Date) == as_date("2021-01-22"))
 ```
 
+
+```{r}
+# find out each US state using usmap
+library(usmap)
+state_map <- us_map(regions = "states")
+state_map %>%
+  distinct(full) %>%
+  rename("Province_State" = "full") -> USstates
+```
+
+```{r}
+# Obtain the number of confirmed cases for each state
+covid %>%
+  filter(case_types == "confirmed_US" & as_date(Date) == as_date("2021-01-22")) %>%
+  select(Province_State, County, dailyValues) %>%
+  group_by(Province_State) %>%
+  tally(dailyValues) %>%
+  right_join(USstates) %>%
+  rename("confirmed" = "n") -> confirmed
+```
+
+```{r}
+# Obtain the number of death cases for each state
+covid %>%
+  filter(case_types == "deaths_US" & as_date(Date) == as_date("2021-01-22")) %>%
+  select(Province_State, County, dailyValues) %>%
+  group_by(Province_State) %>%
+  tally(dailyValues) %>%
+  right_join(USstates) %>%
+  rename("deaths" = "n") -> deathes
+
+# add confirmed and death cases in a dataframe
+full_join(confirmed, deathes) -> covidForRegression
+
+
+covidForRegression
+reg <- lm(deaths ~ confirmed, data = covidForRegression)
+summary(reg)
+
+covidForRegression %>%
+  ggplot(aes(x = confirmed, y = deaths)) +
+  geom_smooth(method = lm) +
+  geom_point()
+```
+
+
+
 ```{r}
 #covid %>%
   #write_excel_csv("covidJHU.csv")
 ```
-
-
-
-```{r}
-covid %>%
-  
-```
-
-
-
