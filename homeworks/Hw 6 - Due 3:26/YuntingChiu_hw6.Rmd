@@ -185,8 +185,9 @@ anova(reg, full)
 ```
 
 (e) Test whether the proposed linear regression model is significant. What do the results of the ANOVA F-test imply about the slopes?
-- Let we set H0: $\beta1 = \beta2 = 0$ vs Ha: $\beta1 = \beta2 \neq0$.
+- Let we set H0: $\beta1 = \beta2 = 0$ vs Ha: $\beta1 \neq0 or \beta2 \neq0 $ at least.
 - We found both p-values ($\beta1$ and $\beta2$) are smaller than significant level, implying that we are in favor of Ha.
+Reference: https://www.researchgate.net/post/Is_the_null_and_alternative_hypothesis_for_this_multiple_linear_regression_analysis_correct
 ```{r}
 anova(reg)
 summary(reg)
