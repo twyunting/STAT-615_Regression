@@ -17,7 +17,7 @@ $R^2$, so we should include all available predictor variables in the model.” C
 
 2. (**6.4**) Why is it not meaningful to attach a sign to the coefficient of multiple correlation R,
 although we do so for the coefficient of simple correlation $r_{12}$?
-- The range of simple correlation coefficient is -1 to 1. The multiple correlation shows how any variable can be predicted by using a set of other variables. There will be several independent variables, each of which will have a different effect. The multiple correlation coefficient will be more complicated than the simple one because the range is not limited to -1 to 1.
+- The range of simple correlation coefficient is -1 to 1. The multiple correlation shows how any variable can be predicted by using a set of other variables. There will be several independent variables, each of which will have a different effect and a different direction. The multiple correlation coefficient will be more complicated than the simple one because the range is not limited to -1 to 1.
 
 3. (**6.27**) In a small-scale regression study, the following data were obtained,
 
@@ -182,10 +182,11 @@ $$
 ```{r}
 full <- lm(brand ~ as.factor(moisture) + as.factor(sweetness), data = brand)
 anova(reg, full)
+anova(full, reg)
 ```
 
 (e) Test whether the proposed linear regression model is significant. What do the results of the ANOVA F-test imply about the slopes?
-- Let we set H0: $\beta1 = \beta2 = 0$ vs Ha: $\beta1 \neq0 or \beta2 \neq0 $ at least.
+- Let we set H0: $\beta1 = \beta2 = 0$ vs Ha: $\beta1 \neq0$ or $\beta2 \neq0$ at least.
 - We found both p-values ($\beta1$ and $\beta2$) are smaller than significant level, implying that we are in favor of Ha.
 Reference: https://www.researchgate.net/post/Is_the_null_and_alternative_hypothesis_for_this_multiple_linear_regression_analysis_correct
 ```{r}
