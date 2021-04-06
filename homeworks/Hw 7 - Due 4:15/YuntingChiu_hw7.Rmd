@@ -49,7 +49,10 @@ $$
 - SSR(X2, X4 | X1, X3, X5)
 
 4. (**7.28b, Stat-615 only**) Show that SSReg(X1, X2, X3, X4) = SSReg(X2, X3)+SSReg(X1 | X2, X3)+SSReg(X4 | X1, X2, X3)
-- Reference: https://www.stat.colostate.edu/~riczw/teach/STAT540_F15/Lecture/lec09.pdf
+
+Reference: 
+- https://www.stat.colostate.edu/~riczw/teach/STAT540_F15/Lecture/lec09.pdf
+- https://www.math.arizona.edu/~piegorsch/571A/STAT571A.Ch07.pdf
 
 ![](pics/4.jpeg)
 
@@ -111,5 +114,47 @@ anova(X1givenX2)
 
 (f)
 - Regress Y on X2 and obtain the residuals.
+```{r}
+residuals(lm(Y ~ X2 , data = brand))
+```
+
 - Regress X1 on X2 and obtain the residuals.
 - Regress residuals from the model “Y on X2” on residuals from the model “X1 on X2”; compare the estimated slope, error sum of squares with #1. What about $R^2$?
+
+6. (**8.13**) Consider a regression model Y = $\beta0$ + $\beta1$X1 + $\beta2$X2 + e, where X1 is a numerical variable, and X2 is a dummy variable. Sketch the response curves (the graphs of E(Y) as a
+function of X1 for different values of X2), if $\beta0$ = 25, $\beta1$ = 0.2, and $\beta2$ = −12.
+
+- The blue line indicates the association between E(Y) and X1 when X2 = 0
+- The green line indicates the association between E(Y) and X1 when X2 = 1
+
+![](pics/6.png)
+
+7. Continue the previous exercise. Sketch the response curves for the model with interaction,
+Y = $\beta0$ + $\beta1$X1 + $\beta2$X2 + $\beta3$X1X2 + e, given that $\beta3$ = −0.2
+
+- The red line indicates the association between E(Y) and X1 when X2 = 0
+- The green line indicates the association between E(Y) and X1 when X2 = 1
+
+![](pics/7.png)
+
+
+8. (**8.34**) In a regression study, three types of banks were involved, namely, (1) commercial, (2) mutual savings, and (3) savings and loan. Consider the following dummy variables for the type of bank:
+
+![](pics/8.png)
+
+(a) Develop the first-order linear regression model (no interactions) for relating last year’s profit or loss (Y) to size of bank (X1) and type of bank (X2, X3).
+$$
+Yi = \beta0 + \beta1X1 + \beta2X2 + \beta3X3 + ei
+$$
+(b) State the response function for the three types of banks.
+- In this data, we can see the `X2` and `X3` are dummy variables.
+
+![](pics/8b.png)
+
+(c) Interpret each of the following quantities: (1) $\beta2$, (2) $\beta3$, (3) $\beta2$ − $\beta3$.
+
+- Y represents profit or loss, X1 represents size, and X2 and X3 represent dummy variables.
+1. $\beta2$:
+2. $\beta3$
+3. $\beta2$ − $\beta3$: 
+

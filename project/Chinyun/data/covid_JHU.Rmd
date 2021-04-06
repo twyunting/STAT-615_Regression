@@ -287,8 +287,32 @@ state_lat_long %>%
 # setdiff(USstates$Province_State,state_lat_long$Province_State)
 covidForRegression %>% 
   left_join(state_lat_long, by = "Province_State") %>% 
-  select(Province_State, Latitude, Longitude, everything())-> covidForRegression
+  select(Province_State, Latitude, Longitude, everything()) -> covidForRegression
 covidForRegression
+```
+# See the scatter plot for each Y vs Xi
+
+```{r}
+covidForRegression %>%
+  ggplot(aes(x = confirmed, y = deaths)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+```
+
+```{r}
+# nine_income
+covidForRegression %>%
+  ggplot(aes(x = nine_income, y = deaths)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+```
+
+```{r}
+# twen_income
+covidForRegression %>%
+  ggplot(aes(x = twen_income, y = deaths)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
 ```
 
 # Example of simple linear regression model
