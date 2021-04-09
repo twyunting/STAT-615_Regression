@@ -117,7 +117,7 @@ anova(X1givenX2)
 (f)
 - Regress Y on X2 and obtain the residuals.
 ```{r}
-lm.fit.5fa <- (lm(Y ~ X2 , data = brand))
+lm.fit.5fa <- lm(Y ~ X2 , data = brand)
 lm.fit.5fa$residuals -> a
 a
 ```
@@ -130,9 +130,17 @@ b
 ```
 
 - Regress residuals from the model “Y on X2” on residuals from the model “X1 on X2”; compare the estimated slope, error sum of squares with #1. What about $R^2$?
+
+ + The regression of `Y` on `X2`: estimated slope is 4.375, SSE is 1660.75, $R^2$ is 0.1557.
+ + The regression of `Y` and `X1` on `X2`: estimated slope is 4.425, SSE is 94.3, $R^2$ is 0.9432.
+ + Because these two model are not regressing the same size so these two R-squares are completely different.
+
 ```{r}
 lm.fit.5fc <- lm(a ~ b)
+summary(lm.fit.5fa) # lm(Y ~ X2)
+anova(lm.fit.5fa)
 summary(lm.fit.5fc)
+anova(lm.fit.5fc)
 ```
 
 
@@ -208,7 +216,7 @@ anova(lm.fit, lm.fit.dropedX2)
 
 (c) Fit the regression model $Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_1X_2 + e$ and state the estimated regression function. Interpret $\beta_3$. Test significance of the interaction term.
 ```{r}
-#  interaction term
+# interaction term
 lm.fit.interaction <- lm(Y ~ X1 * X2, data = GPA)
 summary(lm.fit.interaction)
 ```
@@ -220,4 +228,4 @@ $$
 
 - If X2 = 0: $\hat{Y} = 1.83364 + 0.04992X_1$\
 - If X2 = 1: $\hat{Y} = 1.83364 + 0.04992X_1 + 2.49114 - 0.09635X_1 = 4.32478 - 0.04645X_1$\
-- As previous stated, `X2` = 1 is the student has indicated a major at the time of application, otherwise `X2` is 0. The estimated value of $beta 3$ is -0.09635, indicating that there is a expected difference value on GPA between the students in these two groups.
+- As previous stated, `X2` = 1 is the student has indicated a major at the time of application, otherwise `X2` is 0. The estimated value of $\beta3$ is -0.09635, indicating that there is a expected difference value on GPA between the students in these two groups (whether they have indicated a major or not).
