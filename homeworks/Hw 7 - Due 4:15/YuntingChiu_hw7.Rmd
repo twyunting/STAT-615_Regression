@@ -43,9 +43,9 @@ The equation might be:
 $$
 Y = \beta0 + \beta1X1 + \beta2X2 + \beta3X3 + \beta4X4 + \beta5X5 + ei
 $$
-(a) whether or not $\beta5$ = 0?
-- SSR(X5 | X2, X3, X4, X5)
-(b) whether or not $\beta2$ = $\beta4$ = 0?
+(a) whether or not $\beta5$ = 0?\
+- SSR(X5 | X2, X3, X4, X5)\
+(b) whether or not $\beta2$ = $\beta4$ = 0?\
 - SSR(X2, X4 | X1, X3, X5)
 
 4. (**7.28b, Stat-615 only**) Show that SSReg(X1, X2, X3, X4) = SSReg(X2, X3)+SSReg(X1|X2, X3)+SSReg(X4 | X1, X2, X3)
@@ -64,6 +64,8 @@ Recall the variables: It was collected to study the relation between degree of b
 
 (a) Obtain the ANOVA table that decomposes the regression sum of squares into extra sum of squares associated *with X1* and *with X2, given X1*.
 
+- SSR(X1) = 1566.45
+- SSR(X2|X1) = 306.25
 ```{r}
 brand <- read.table("./data/CH06PR05.txt")
 brand %>%
@@ -115,11 +117,24 @@ anova(X1givenX2)
 (f)
 - Regress Y on X2 and obtain the residuals.
 ```{r}
-# residuals(lm(Y ~ X2 , data = brand))
+lm.fit.5fa <- (lm(Y ~ X2 , data = brand))
+lm.fit.5fa$residuals -> a
+a
 ```
 
 - Regress X1 on X2 and obtain the residuals.
+```{r}
+lm.fit.5fb <- (lm(X1 ~ X2, data = brand))
+lm.fit.5fb$residuals -> b
+b
+```
+
 - Regress residuals from the model “Y on X2” on residuals from the model “X1 on X2”; compare the estimated slope, error sum of squares with #1. What about $R^2$?
+```{r}
+lm.fit.5fc <- lm(a ~ b)
+summary(lm.fit.5fc)
+```
+
 
 6. (**8.13**) Consider a regression model $Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + e$, where X1 is a numerical variable, and X2 is a dummy variable. Sketch the response curves (the graphs of E(Y) as a
 function of X1 for different values of X2), if $\beta0$ = 25, $\beta1$ = 0.2, and $\beta2$ = -12.
@@ -158,13 +173,51 @@ $$
 3. $\beta_2-\beta_3$: The difference between the mutual saving bank's and the commercial bank's expected profit or loss. 
 
 9. (**8.16, 8.20**) Refer to our old GPA data
-```{r}
-GPA <- read.table("./data/CH01PR19.txt")
-GPA
-```
 
 An assistant to the director of admissions conjectured that the predictive power of the model could be improved by adding information on whether the student had chosen a major field of concentration at the time the application was submitted. Suppose that the first 10 students chose their major when they applied.
+```{r}
+GPA <- read.table("./data/CH01PR19.txt")
+
+GPA %>%
+  rename(Y = "V1", X1 = "V2") -> GPA
+# Suppose that the first 10 students chose their major when they applied.
+GPA %>%
+  mutate(X2 = 0) -> GPA
+GPA$X2[1:10] = 1
+head(GPA)
+```
 
 (a) Fit the regression model $Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + e$, where X1 is the entrance test score and X2 = 1 if a student has indicated a major at the time of application, otherwise X2 = 0. State the estimated regression function.
+```{r}
+lm.fit <- lm(Y ~ X1 + X2, data = GPA)
+summary(lm.fit)
+```
+### State the Estimated Regression Function
+$$
+\hat{Y} =  2.11062 +  2.11062X_1 + 0.07728X_2
+$$
+
+
 (b) Test whether X2 can be dropped from the model, using $\alpha$ = 0.05.
+
+Significance of the whole model is tested by H0 : $\beta_2 = 0$ vs H1 : $\beta_2 \neq 0$. With a large p-value 0.7091 and a small test statistic F = 0.1399, we fail to reject the null hypothesis, meaning that we have no evidence to conclude that `X2` is significant so `X2` may be remove from the model.
+```{r}
+lm.fit.dropedX2 <- lm(Y ~ X1, data = GPA)
+anova(lm.fit, lm.fit.dropedX2)
+```
+
 (c) Fit the regression model $Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_1X_2 + e$ and state the estimated regression function. Interpret $\beta_3$. Test significance of the interaction term.
+```{r}
+#  interaction term
+lm.fit.interaction <- lm(Y ~ X1 * X2, data = GPA)
+summary(lm.fit.interaction)
+```
+
+### State the Estimated Regression Function
+$$
+\hat{Y} =  1.83364 +  0.04992X_1 + 2.49114X_2 - 0.09635X_1X_2
+$$
+
+- If X2 = 0: $\hat{Y} = 1.83364 + 0.04992X_1$\
+- If X2 = 1: $\hat{Y} = 1.83364 + 0.04992X_1 + 2.49114 - 0.09635X_1 = 4.32478 - 0.04645X_1$\
+- As previous stated, `X2` = 1 is the student has indicated a major at the time of application, otherwise `X2` is 0. The estimated value of $beta 3$ is -0.09635, indicating that there is a expected difference value on GPA between the students in these two groups.

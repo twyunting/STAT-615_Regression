@@ -1,0 +1,141 @@
+---
+title: "Lab 12"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: blue
+linkcolor: red
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+# Install the data
+```{r}
+mtcars %>%
+  head() %>%
+  select(mpg, hp, am)
+```
+We will focus on three variables: `mpg`, `hp`, `am`
+```{r}
+mtcars %>%
+  ggplot(aes(x = hp, y = mpg)) +
+  geom_point(shape = 21, size = .1, stroke = 2)
+```
+
+We could also label the points based on the transmission type `am`.\
+`am` is a dummy variable:
+
+- 0 for automatic transmissions
+- 1 for manual transmissions
+```{r}
+mtcars %>%
+  ggplot(aes(x = hp, y = mpg, col = as.factor(am))) +
+  geom_point(shape = 21, size = .1, stroke = 2) +
+   scale_color_manual(name="transmissions",
+                       labels=c("automatic","manual"),
+                       values=c("red","blue")) +
+  theme_bw()
+```
+
+# simple linear regression
+$$
+Y = \beta0 + \beta1X1 + ei
+$$
+```{r}
+mpg_hp_slr = lm(mpg ~ hp, data = mtcars)
+summary(mpg_hp_slr)
+```
+
+# Add the fitted line to the plot
+```{r}
+mtcars %>%
+  ggplot(aes(x = hp, y = mpg, col = as.factor(am))) +
+  # geom_smooth(method='lm', formula = y~x, se = FALSE) +
+    geom_point(shape = 21, size = .1, stroke = 2) +
+   scale_color_manual(name="transmissions",
+                       labels=c("automatic","manual"),
+                       values=c("red","blue")) +
+  theme_bw() +
+  geom_abline(aes(intercept = 30.09886, slope = -0.06823))
+```
+
+Obviously, the red points are below the line, meaning that the model overestimates the fuel efficiency of automatic transmission. On the other hand, the blue points are above the line, meaning that the model underestimates the fuel efficiency of manual transmission. Thus, we need to constantly adjust the model.
+
+# Multiple regression model
+$$
+Y = \beta0 + \beta1X1 + \beta2X2 + ei
+$$
+
+The model looks like
+```{r}
+mpg_hp_add = lm(mpg ~ hp + am, data = mtcars)
+summary(mpg_hp_add)
+```
+
+As we mentioned, X2(`am`) is a dummy variable, it's only takes the values 0 and 1. We can write two separate versions, one for manual transmissions and the other for automatic transmissions.
+
+# For automatic transmissions - X2 = 0
+$$
+Y = \beta0 + \beta1X1 + ei
+$$
+
+# For manual transmissions - X2 = 1
+$$
+Y = (\beta0 + \beta2) + \beta1X1 + ei
+$$
+These models have the same slope $\beta1$, but different intercepts, which differ by $\beta2$. So the change in `mpg` is the same for both models, but the average mpg difference between the two transmission types is $\beta2$.
+```{r}
+summary(mpg_hp_add)$coefficients[1] # b0
+summary(mpg_hp_add)$coefficients[2] # b1
+summary(mpg_hp_add)$coefficients[3] # b2
+```
+
+
+The estimated slope and intercepts can then be calculated by combining these.
+```{r}
+intercept_auto = coef(mpg_hp_add)[1]
+intercept_auto
+intercept_manu = coef(mpg_hp_add)[1] + coef(mpg_hp_add)[3]
+intercept_manu
+slope_auto = coef(mpg_hp_add)[2]
+slope_auto
+slope_manu = coef(mpg_hp_add)[2]
+slope_manu
+```
+
+# Re-Plot
+```{r}
+mtcars %>%
+  ggplot(aes(x = hp, y = mpg, col = as.factor(am))) +
+  geom_smooth(method='lm', formula = y~x, se = FALSE) +
+    geom_point(shape = 21, size = .1, stroke = 2) +
+   scale_color_manual(name="transmissions",
+                       labels=c("automatic","manual"),
+                       values=c("red","blue")) +
+  theme_bw()
+```
+
+The above plot makes it abundantly clear that $\beta2$ is significant, but let us test it mathematically.
+
+- Hypothesis Test: $\beta2 = 0$ vs $\beta2 \neq 0$
+
+## t-test
+```{r}
+summary(mpg_hp_add)$coefficients["am", ]
+```
+
+## F test
+```{r}
+anova(mpg_hp_slr, mpg_hp_add)
+```
+
+According to the t-test and f-test, the p-values are the same, but the  F test statistic is the t test statistic squared.
+
+# Interpretations
+- bo = 26.584914 is the estimated average `mpg` for an automatic transmission car with 0 `hp`.
+- b0+b2 = 26.584914 + 5.277085 = 31.862 is the estimated average `mpg` for a manual transmission car with 0 `hp`.
+- b2 = 5.277085 is the estimated difference in average `mpg` for cars with manual transmissions as compared to those with automatic transmission, for any `hp`.
+- b1 = -0.058888 is the estimated change in average `mpg` corresponds to increase in one unit of `hp`, no matter manual or automatic transmissions.
+
