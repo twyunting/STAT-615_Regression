@@ -11,3 +11,116 @@ linkcolor: red
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
+1. (**9.1**) A speaker stated: “In well-designed experiments involving quantitative explanatory variables, a procedure for reducing the number of explanatory variables after the data are obtained is not necessary.” Do you agree? Discuss.
+
+- An explanatory variable is a type of independent variable.
+- Assume that these variables have met the assumptions and that there is no collinearity in the well-designed experiments. The better approach is to carry out procedures to reduce the number of explanatory variables that are not significant, because these variables cannot explain the model and may reduce the precision of the outcome.
+
+2. (**9.5**) In forward stepwise regression, what advantage is there in using a relatively small $\alpha$ to-enter value for adding variables? What advantage is there in using a larger $\alpha$-to-enter
+value?
+
+- 
+
+4. (**Continuing 6.27 from an earlier homework**) In a small-scale regression study, the following
+data were obtained,
+
+|Y    |     X1   |    X2|
+|:--------|:------:|--------:|
+|42.0 |7.0| 33.0|
+|33.0 |4.0 |41.0|
+|75.0| 16.0| 7.0|
+|28.0| 3.0| 49.0|
+|91.0 |21.0 |5.0|
+|55.0| 8.0 |31.0|
+
+# Make a data frame
+```{r}
+Y <- c(42, 33, 75, 28, 91, 55)
+X1 <- c(7, 4, 16, 3, 21, 8)
+X2 <- c(33, 41, 7, 49, 5, 31)
+
+df <- data.frame(Y, X1, X2)
+df
+```
+
+
+# Model selection
+```{r}
+library(leaps)
+df.fit <-  regsubsets(Y ~ X1 + X2, data = df)
+summary(df.fit)
+```
+
+# 1.1 Find out the largest adjusted R squares
+
+```{r}
+summary(df.fit)$adjr2
+which.max(summary(df.fit)$adjr2)
+```
+
+# 1.2 Find out the smallest CP
+```{r}
+summary(df.fit)$cp
+which.min(summary(df.fit)$cp)
+```
+
+# 1.3 Find out the smallest BIC (penalized-likelihood criteria)
+```{r}
+summary(df.fit)$bic
+which.min(summary(df.fit)$bic)
+```
+
+# 2.1 Find out the proper adjusted R and BIC using plot
+```{r}
+df.fit2 <-  regsubsets( Y ~ ., data = df, method = "backward" )
+plot(df.fit2, sclae = "bic")
+plot(df.fit2, scale = "adjr2")
+```
+
+
+According to the result above, the best model is:
+```{r}
+best1 <- lm(Y ~ X1, data = df)
+summary(best1)
+```
+
+# 3.1 We can also choose the best model by means of a stepwise procedure
+```{r}
+null <-  lm( Y ~ 1, data = df )
+full <-  lm( Y ~ ., data = df )
+
+step( null, scope = list(lower = null, upper = full), direction = "forward" )
+step( null, scope = list(lower = null, upper = full), direction = "backward" )
+step( null, scope = list(lower = null, upper = full), direction = "both" )
+```
+
+In summary, the smaller RSS is `Y~X1`, so the best porformance of this model is:
+```{r}
+best2 <- lm(Y ~ X1, data = df)
+summary(best2)
+```
+
+5. (**9.10–9.11, 9.18, 9.21–9.22**) A personnel officer in a governmental agency administered four newly developed aptitude tests to each of 25 applicants for entry-level clerical positions in the agency. For purpose of the study, all 25 applicants were accepted for positions irrespective of their test scores. After a probationary period, each applicant was rated for proficiency on the job, and scores of the four tests (X1, X2, X3, X4) and the job proficiency score (Y) were recorded.
+```{r}
+A1 <-  read.table("./data/CH09PR10.txt")
+A2 <-  read.table("./data/CH09PR22.txt")
+A1$Y=V1; A1$X1=V2; A1$X2=V3; A1$X3=V4; A1$X4=V5;
+A1 <-  data.frame(Y,X1,X2,X3,X4)
+```
+
+The resulting **Job Proficiency** data set is available on our Blackboard in “Data sets” and on the next page of this homework assignment.
+
+(a) Obtain the scatter plot matrix of these data. What do the scatter plots suggest about the nature of the functional relationship between the response variable and each of the predictor variables? Do you notice any serious multicollinearity problems?
+
+(b) Fit the multiple regression function containing all four predictor variables as first-order (linear) terms. Does it appear that all predictor variables should be retained?
+
+(c) Using only first-order terms for the predictor variables in the pool of potential Xvariables, find the best regression models according to different criteria - adjusted $R^2$, Cp, and BIC.
+
+(d) Using forward stepwise selection, find the best subset of predictor variables to predict job proficiency. Use the α-to-enter limit of 0.05.
+
+(e) Repeat the previous question using the backward elimination method and the α-toremove limit of 0.10.
+
+(f) To assess and compare internally the predictive ability of our models, split the data into
+training and testing subsets and estimate the mean squared prediction error MSPE for all regression models identified in (b–e).
+
+(g) To assess and compare externally the validity of our models, 25 a1dditional applicants for entry level clerical positions were similarly tested and hired. Their data are below, in the table on the right. Use these data as the testing set and estimate MSPE for all regression models identified in (b–e).

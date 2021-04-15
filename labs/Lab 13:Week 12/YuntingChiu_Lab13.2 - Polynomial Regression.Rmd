@@ -10,4 +10,114 @@ linkcolor: red
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(broom)
+library(leaps)
 ```
+
+# Fitting a polynomial regression
+Because the distribution of observed data does not match the linear regression line at the beginning. We decide not to use the linear regression model.
+```{r}
+library(ISLR)
+attach(Auto)
+
+reg <- lm(mpg~weight, data = Auto)
+
+Auto %>%
+  ggplot(aes(weight, mpg))+
+  geom_smooth(method = lm, se = FALSE) +
+  geom_point() +
+  theme_bw()
+```
+
+# look at the residual plot
+Examine the pattern in the residuals vs weight plot, which indicates a bad bit (but not really bad). To achieve this goal, consider using a more reliable regression model.
+```{r}
+# plot( weight, residuals(reg))
+augment(reg) %>%
+  ggplot(aes(x = weight, y = .resid)) +
+  geom_smooth(method = lm, se = FALSE) +
+  geom_point() +
+  theme_bw()
+```
+
+# summary Table
+```{r}
+summary(reg)
+```
+
+# Try to use polynomial regression model
+## model selection
+```{r}
+polynomial.fit <-  regsubsets(mpg ~ poly(weight, 10), data=Auto )
+summary(polynomial.fit)
+```
+
+# find out the largest adjusted R squares
+
+```{r}
+summary(polynomial.fit)$adjr2
+which.max(summary(polynomial.fit)$adjr2)
+```
+So the largest adjusted R squares is 
+$$
+\hat{y} = \beta_0 + \beta_1X + \beta_2X^2 + \beta_3X^3 + \beta_4X^4 + e
+$$
+# find out the smallest CP
+```{r}
+summary(polynomial.fit)$cp
+which.min(summary(polynomial.fit)$cp)
+```
+So the smallest CP is 
+$$
+\hat{y} = \beta_0 + \beta_1X + \beta_2X^2 + \beta_3X^3 + e
+$$
+# find out the smallest BIC (penalized-likelihood criteria)
+```{r}
+summary(polynomial.fit)$bic
+which.min(summary(polynomial.fit)$bic)
+```
+
+so the smallest BIC is
+$$
+\hat{y} = \beta_0 + \beta_1X + \beta_2X^2  + e
+$$
+
+# Cross-validation agrees with the quadratic model
+Assessing how the results of a statistical analysis will generalize to an independent data set. 
+```{r}
+library(boot)
+cv.error = rep(0,10)
+for (p in 1:10){
+  polynomial = glm( mpg ~ poly(weight, p) )
+  cv.error[p] = cv.glm( Auto, polynomial )$delta[1]}
+
+cv.error
+```
+
+# Plot the cv.error
+- The `y` index represents the **Mean squared error**. Our goal is to find the polynomial model with the lowest MSE. The quadratic model has the lowest MSE, according to the results.
+- So, we choose the quadratic regression – degree 2 polynomial. Its prediction MSE is 17.52474.
+```{r}
+plot(cv.error); lines(cv.error)
+which.min(cv.error)
+```
+
+```{r}
+poly2 <- lm( mpg ~ poly(weight,2), data = Auto)
+summary(poly2)
+```
+
+# Plot
+```{r}
+Auto %>%
+  ggplot(aes(x = weight, y = mpg)) +
+  stat_smooth(method="lm", se=TRUE, fill=NA,
+                formula= y ~ poly(x, 2, raw = TRUE), colour="red") +
+  geom_point()
+```
+
+The quadratic regression best fits the data in this lab. We can conclude that this model is good because it has a higher Adjusted R-squared (0.7137) and each independent variable is significant.
+
+
+# Reference
+- https://stats.stackexchange.com/questions/95939/how-to-interpret-coefficients-from-a-polynomial-model-fit
