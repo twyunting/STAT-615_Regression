@@ -1,0 +1,521 @@
+---
+title: 'COVID19 Confirmed vs Deaths'
+subtitle: "Web Scraping Data from Johns Hopkins University"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    number_sections: yes
+    theme: cerulean
+  pdf_document: default
+urlcolor: blue
+linkcolor: red
+---
+
+# Install the required libraries
+```{r}
+library(broom) # convert analysis objects from R into tidy tibbles
+library(tidyverse) # tidy data
+library(psych) # EDA
+library(countrycode) # get the continents
+library(lubridate) # adjust the date variable
+library(usmap) # find out the US states
+library(readxl) # read MS excel file
+library(corrplot) #for visualization of correlation
+library(lattice) #for visualization
+library(caTools) #for splitting data into testing and training data
+library(plotly) #converting ggplot to plotly
+```
+
+# Web Scrapping Covid Data
+- The data source is from [Johns Hopkins University](https://github.com/CSSEGISandData)
+- "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series"
+- If you instead download the file using the github.com link, you will actually be downloading a web page with buttons and comments and which displays your desired content in the middle. It's what you want to give to your web browser to get a nice page to look at but not to download.
+```{r}
+# Installed library
+url_in <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/"
+
+```
+
+# Extract four datasets
+    + time_series_covid19_confirmed_global.csv
+    + time_series_covid19_deaths_global.csv
+    + time_series_covid19_confirmed_US.csv
+    + time_series_covid19_deaths_US.csv
+```{r}
+df <- tibble(file_names = c("time_series_covid19_confirmed_global.csv",
+                            "time_series_covid19_deaths_global.csv",
+                            "time_series_covid19_confirmed_US.csv",
+                            "time_series_covid19_deaths_US.csv")) -> df
+```
+
+# Mapping Data
+```{r}
+df %>%
+  mutate(url = str_c(url_in, file_names, sep = "")) -> df
+```
+```{r}
+df %>%
+  mutate(data = map(url, ~read_csv(., na = ""))) -> df
+```
+```{r}
+df %>%
+  mutate(case_types = as.factor(str_extract(file_names, "[:alpha:]*_[gU][:alpha:]*"))) -> 
+  df
+# alpha = Any letter, [A-Za-z]
+# reference: https://www.petefreitag.com/cheatsheets/regex/character-classes/
+```
+```{r}
+df %>%
+  select(case_types, data) -> df
+```
+
+# Clean Data  
+```{r}
+df %>%
+  mutate(vars = map(df$data, names)) -> df
+# map(df$vars, ~unlist(.)[1:15]) for checking
+
+fix_names <- function(df, pattern, rePattern){
+  stopifnot(is.data.frame(df), is.character(pattern), is.character(rePattern))
+  names(df) <- str_replace_all(names(df), pattern, rePattern)
+  return(df)
+}
+
+df %>%
+  mutate(data = map(data, ~fix_names(., "([ey])/", "\\1_")),
+         data = map(data, ~fix_names(., "Admin2", "County")),
+         data = map(data, ~fix_names(., "Long_", "Long")),
+         data = map_if(data, str_detect(df$case_types, "US"),
+                   ~select(., -c("UID", "iso2", "iso3", 
+                                 "code3", "FIPS", "Combined_Key"))),
+         data = map_if(data, str_detect(df$case_types, "global"),
+                      ~mutate(., County = "NA")),
+         data = map_if(data, !str_detect(df$case_types, "deaths_US"),
+                      ~mutate(., Population = 0)),
+         data = map(data, ~unite(., "Country_State", 
+                                 c("Country_Region", "Province_State"),
+                                 remove = FALSE, na.rm = TRUE,
+                                 sep = "_"))
+         ) -> df
+
+df %>%
+  mutate(vars = map(df$data, names)) -> df # synchronize the vars correspondingly
+# map(df$vars, ~unlist(.)) # for checking 
+```
+
+# Tidy each dataframe 
+
+```{r}
+df %>%
+  mutate(data = map(data, ~pivot_longer(data = ., cols = contains("/"),
+                                        names_to = "Date",
+                                        values_to = "dailyValues",
+                                        names_transform = list(Date = mdy)))
+         ) -> df
+# df$data <- map(df$data, names) # synchronize the vars correspondingly
+# map(df$vars, ~unlist(.)) # for checking 
+
+# crate a function to fix in type of Date
+mdyDate <- function(df, varsDate){
+  # stopifnot(is.data.frame(df), is.character(varsDate))
+  df[[varsDate]] <- ymd(df[[varsDate]])
+  return(df)
+}
+
+df %>%
+  mutate(data = map(data, ~mdyDate(., "Date"))) -> df_long
+
+# str(df_long) # check the data set
+```
+
+# Add Continents 
+```{r, warning = FALSE}
+df_long %>%
+  mutate(data = map(data, ~mutate(., Continent = countrycode(Country_Region,
+                                               origin = "country.name",
+                                               destination = "continent")))
+         ) -> df_long
+```
+
+# Fix NAs for Continents
+```{r}
+df_long %>%
+  mutate(data = map(data, ~mutate(., Continent = case_when(
+                                               Country_Region == "Diamond Princess" ~ "Asia",
+                                               Country_Region == "Kosovo" ~ "Americas",
+                                               Country_Region == "MS Zaandam" ~ "Europe",
+                                               TRUE ~ Continent)
+                                  ))) -> df_long
+
+map(df_long$data, ~unique(.$Continent))
+```
+
+# Unnest the Data Frames    
+```{r}
+# 1
+df_long %>%
+  unnest(cols = data) %>%
+  ungroup() -> df_all
+
+# 2
+remove(df, df_long)
+
+# 3
+df_all %>%
+  select(-vars) -> df_all
+```
+
+# Get World Population Data
+- source: [UN source](https://population.un.org/wpp/Download/Standard/CSV/)
+```{r}
+# 1
+df_pop <- read_csv("../data/WPP2019_TotalPopulation.csv")
+# summarize(df_pop, across(everything(), ~sum(is.na(.)))) # check NAs
+
+# 2 
+semi_join(df_pop, df_all, by = c("Location" = "Country_Region")) -> df_pop
+
+# 3
+df_pop %>% 
+  mutate(rank_p = rank(-PopTotal, na.last = TRUE),
+         rank_d = rank(-PopDensity, na.last = TRUE),
+         PopTotal = (PopTotal*1000)) -> df_pop
+```
+
+# Add Population Data to `df_all`
+```{r}
+df_all %>%
+  inner_join(df_pop, by = c("Country_Region" = "Location")) -> df_all
+
+df_all 
+```
+
+# We only focus on 2020/01/22 - 2021/01/22 
+```{r}
+# extract one year
+df_all %>%
+  filter(case_types == "confirmed_US" & as_date(Date) <= as_date("2021-01-22") | case_types == "deaths_US" & as_date(Date) <= as_date("2021-01-22")) -> covid
+
+
+covid %>% 
+  group_by(Province_State, Lat, Long) %>% ## Lat and Long not the only value per state
+  filter(Province_State == "Alabama")
+
+names(covid)
+
+covid %>% 
+  filter(Province_State == "Rhode Island")
+```
+
+# find out each US state using usmap
+```{r}
+state_map <- us_map(regions = "states")
+state_map %>%
+  distinct(full) %>%
+  rename("Province_State" = "full") -> USstates
+```
+
+# Obtain the number of confirmed cases for each state
+```{r}
+covid %>%
+  filter(case_types == "confirmed_US" & as_date(Date) == as_date("2021-01-22")) %>%
+  select(Province_State, County, dailyValues) %>%
+  group_by(Province_State) %>%
+  tally(dailyValues) %>%
+  right_join(USstates) %>%
+  rename("confirmed" = "n") -> confirmed
+```
+# Obtain the number of death cases for each state
+```{r}
+covid %>%
+  filter(case_types == "deaths_US" & as_date(Date) == as_date("2021-01-22")) %>%
+  select(Province_State, County, dailyValues) %>%
+  group_by(Province_State) %>%
+  tally(dailyValues) %>%
+  right_join(USstates) %>%
+  rename("deaths" = "n") -> deathes
+
+full_join(confirmed, deathes) -> covidForRegression
+```
+
+# Read 2019 American community survey estimate by race by state- for Total population only
+
+- credit to https://www.governing.com/now/State-Population-By-Race-Ethnicity-Data.html  
+
+```{r}
+race <- read_csv("../data/2019_state_community_by_race.csv")
+race %>% 
+  rename(Province_State = State) -> race
+
+covidForRegression %>% 
+  left_join(race, by = "Province_State") %>%
+  rename(American_Indian_and_Alaska_Native_alone = "American Indian and Alaska Native alone",
+         Asian_alone = "Asian alone",
+         Black_or_African_American_alone = "Black or African American alone",
+         Native_Hawaiian_and_Other_Pacific_Islander_alone = "Native Hawaiian and Other Pacific Islander alone",
+         Some_other_race_alone = "Some other race alone",
+         Total_Population = "Total Population",
+         Two_or_more_races = "Two or more races",
+         White_alone = "White alone") -> covidForRegression
+
+#race %>% 
+  #anti_join(covidForRegression, by = "Province_State") #-->Check if there are some diff value of state
+
+# The 2020 American Community Survey (ACS) 1-year estimates will be released on September 23, 2021.
+# Since the 2020 survey does not yet release, we use the 2019 survey here 
+```
+
+# Read personal income in 2019 and 2020
+
+-credit to https://www.bea.gov/news/2021/state-annual-personal-income-2020-preliminary-and-state-quarterly-personal-income-4th
+
+```{r}
+personalIncome <- readxl::read_excel("../data/personal_income_sheet1.xlsx")
+personalIncome %>% 
+  rename(IncomeNineteen = `2019`, IncomeTwenty = `2020`) -> personalIncome
+
+personalIncome %>% 
+  semi_join(USstates, by = "Province_State") -> personalIncome
+
+covidForRegression %>% 
+  left_join(personalIncome, by = "Province_State")  %>%
+  select(-IncomeNineteen) -> covidForRegression # only keep IncomeTwenty for the reference
+
+# setdiff(USstates$Province_State, personalIncome$Province_State) -->check if 51 states there
+
+# Personal income [Millions of dollars]
+# we do have to pay attention to the level of unit of each variable
+```
+
+# merge state Latitdue and longitude
+- credit to https://www.kaggle.com/washimahmed/usa-latlong-for-state-abbreviations
+```{r}
+state_lat_long <- read_csv("../data/statelatlong.csv")
+state_lat_long %>% 
+  rename(Province_State = City) %>% 
+  select(-State) -> state_lat_long
+
+# setdiff(USstates$Province_State,state_lat_long$Province_State)
+covidForRegression %>% 
+  left_join(state_lat_long, by = "Province_State") -> covidForRegression
+  # select(Province_State, Latitude, Longitude, everything())  
+covidForRegression
+
+# each variable 
+names(covidForRegression)
+```
+
+```{r}
+#write_csv(covidForRegression, "covid_df_regression.csv")
+```
+
+
+# Research Question: 
+
+# Table 1 Confirmed Covid-19 cases with decending order
+```{r}
+covidForRegression %>%
+  select(1, 2) %>%
+  arrange(desc(confirmed))
+```
+
+# Table 2 Covid-19 deaths
+```{r}
+covidForRegression %>%
+  select(1, 3) %>%
+  arrange(desc(deaths))
+```
+
+# 2. Exploratory Data Analysis 
+
+```{r}
+describe(covidForRegression)
+```
+
+# 3.1 Ethnicity- scatter plot
+## American_Indian_and_Alaska_Native_alone
+```{r}
+covidForRegression %>%
+  ggplot(aes(x = American_Indian_and_Alaska_Native_alone, y = confirmed)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
+```
+
+## Asian_alone
+```{r}
+covidForRegression %>%
+  ggplot(aes(x = Asian_alone, y = confirmed)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
+```
+
+## Black_or_African_American_alone
+```{r}
+covidForRegression %>%
+  ggplot(aes(x = Black_or_African_American_alone, y = confirmed)) +
+  geom_point() +
+  scale_y_log10() +
+  geom_smooth(method = lm, se = FALSE)
+```
+## Native_Hawaiian_and_Other_Pacific_Islander_alone
+```{r}
+covidForRegression %>%
+  ggplot(aes(x = Native_Hawaiian_and_Other_Pacific_Islander_alone, y = confirmed)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
+```
+
+## Some_other_race_alone
+```{r}
+covidForRegression %>%
+  ggplot(aes(x = Some_other_race_alone, y = confirmed)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
+```
+
+## Two_or_more_races
+```{r}
+covidForRegression %>%
+  ggplot(aes(x = Two_or_more_races, y = confirmed)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
+```
+
+## White_alone
+```{r}
+covidForRegression %>%
+  ggplot(aes(x = White_alone, y = confirmed)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
+```
+
+```{r}
+covidForRegression %>%
+  select(-Province_State) -> tmp
+fit0 <- lm(confirmed ~., data = tmp)
+names(tmp)
+summary(fit0)
+library(leaps)
+regsubsets.out <-
+  regsubsets(confirmed ~.,
+         data = tmp,
+         force.in = NULL, force.out = NULL,
+         method = "exhaustive")
+regsubsets.out
+summary.out <- summary(regsubsets.out)
+as.data.frame(summary.out$outmat)
+
+test <- regsubsets(confirmed~., data = tmp, method = "backward", nbest = 4)
+plot(test, scale = "adjr2")
+
+# $adjr2
+```
+
+
+# 3.1 Ethnicity- fit model
+```{r}
+covidForRegression %>%
+  select(confirmed, American_Indian_and_Alaska_Native_alone:Some_other_race_alone, Two_or_more_races, White_alone) -> ethnicity
+names(ethnicity)
+fit1 <- lm(confirmed ~., data = ethnicity)
+summary(fit1)
+```
+
+# Fit Model
+Variables `Asian_alone` has very high Pr(>|t|) value 0.943595 and low significance hence removing it could give us a better model.
+```{r}
+ethnicity %>%
+  select(-Asian_alone) -> ethnicityNoAsian
+fit2 <- lm(confirmed ~., data = ethnicityNoAsian)
+summary(fit2)
+```
+
+# Checking assumptions of multiple regression model
+- Independent observations: We would need to know more from the study design to really assess this. We will assume it holds.
+- The residual/errors follow a normal distribution
+- With equal variances
+- linearity 
+- No influential outliers 
+
+```{r}
+par(mfrow=c(2,2))
+plot(fit2)
+```
+
+```{r}
+t <- rstudent(fit2)
+shapiro.test(t) # not follow a normal distribution
+```
+
+# check the outliers using boxplot
+```{r}
+par(mfrow = c(3, 3))
+boxplot(covidForRegression$deaths,main = "deaths", col='Sky Blue')
+boxplot(covidForRegression$Latitude,main = " Latitude", col='Sky Blue')
+boxplot(covidForRegression$Longitude,main = "Longitude", col='Sky Blue')
+boxplot(covidForRegression$confirmed,main = "confirmed", col='Sky Blue')
+boxplot(covidForRegression$Total_Population,main = " Total_Population", col='Sky Blue')
+boxplot(covidForRegression$IncomeNineteen,main = "IncomeNineteen", col='Sky Blue')
+boxplot(covidForRegression$IncomeTwenty,main = "IncomeTwenty", col='Sky Blue')
+```
+# Checking distribution of dependent variable 
+
+Not follow a normal distribution, not good (right-skewed)
+```{r}
+# Building histogram
+ggplot(data = covidForRegression, aes(deaths)) +
+  geom_histogram() 
+```
+# Consider data transformation
+```{r}
+covidForRegression %>%
+  mutate(deathsLog = log(deaths)) -> covidForRegression
+```
+
+# Examining the distribution of the log dependent variable
+```{r}
+# Building histogram
+ggplot(data = covidForRegression, aes(deathesLog)) +
+  geom_histogram()
+
+hist(covidForRegression$deathsLog) # another way
+```
+
+# Build a multiple regression model 
+```{r}
+lmFit1 <- lm(deaths ~ confirmed + Total_Population + IncomeTwenty, data = covidForRegression)
+summary(lmFit1)
+```
+
+# Fit model 
+Variables `confirmed` and `Total_Population ` have very high Pr(>|t|) value and low significance hence removing them could give us a better model.
+```{r}
+lmFit2 <- lm(deaths ~ IncomeNineteen + IncomeTwenty, data = covidForRegression)
+summary(lmFit2)
+```
+
+# Checking assumptions of multiple regression model
+- Independent observations: We would need to know more from the study design to really assess this. We will assume it holds.
+- The residual/errors follow a normal distribution
+- With equal variances
+- linearity 
+- No influential outliers 
+
+```{r}
+par(mfrow=c(2,2))
+plot(lmFit2)
+```
+
+```{r}
+t <- rstudent(lmFit2)
+shapiro.test(t) # not follow a normal distribution
+```
+
+
+
+# save the dataframe to a local drive
+```{r}
+#covid %>%
+  #write_excel_csv("covidJHU.csv")
+```

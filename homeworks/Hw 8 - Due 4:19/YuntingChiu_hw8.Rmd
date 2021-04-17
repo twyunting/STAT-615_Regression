@@ -19,7 +19,8 @@ library(tidyverse)
 2. (**9.5**) In forward stepwise regression, what advantage is there in using a relatively small $\alpha$ to-enter value for adding variables? What advantage is there in using a larger $\alpha$-to-enter
 value?
 
-- 
+- The main point of stepwise regression method is to obtain the best relationship between the independent variables and the dependent variable.
+- Advantage of small $\alpha$ to-enter value: 
 
 4. (**Continuing 6.27 from an earlier homework**) In a small-scale regression study, the following
 data were obtained,
@@ -45,82 +46,191 @@ df
 
 
 # Model selection
+## 1. Exhaustive Search
 ```{r}
 library(leaps)
 df.fit <-  regsubsets(Y ~ X1 + X2, data = df)
 summary(df.fit)
 ```
 
-# 1.1 Find out the largest adjusted R squares
-
+### 1.1 Find out the largest adjusted R squares
+- Because $R^2$ is not a fair measurement. As the number of parameters increases, so does the $R2$.
 ```{r}
 summary(df.fit)$adjr2
 which.max(summary(df.fit)$adjr2)
 ```
 
-# 1.2 Find out the smallest CP
+### 1.2 Find out the smallest Mallows Cp
 ```{r}
 summary(df.fit)$cp
 which.min(summary(df.fit)$cp)
 ```
 
-# 1.3 Find out the smallest BIC (penalized-likelihood criteria)
+### 1.3 Find out the smallest BIC (penalized-likelihood criteria)
 ```{r}
 summary(df.fit)$bic
 which.min(summary(df.fit)$bic)
 ```
+### Conclusion
+$$
+\hat{Y} = \beta_0 + \beta_1X_1 + e
+$$
 
-# 2.1 Find out the proper adjusted R and BIC using plot
+## 2. Sequential Search
+
+### 2.1 Find out the proper adjusted R and BIC using plot
 ```{r}
-df.fit2 <-  regsubsets( Y ~ ., data = df, method = "backward" )
-plot(df.fit2, sclae = "bic")
-plot(df.fit2, scale = "adjr2")
+reg.backward <-  regsubsets( Y ~ ., data = df, method = "backward" )
+plot(reg.backward, scale = "adjr2")
+plot(reg.backward, sclae = "bic")
 ```
 
+### Conclusion
+According to the result above, the best model is
+$$
+\hat{Y} = \beta_0 + \beta_1X_1 + e
+$$
 
-According to the result above, the best model is:
-```{r}
-best1 <- lm(Y ~ X1, data = df)
-summary(best1)
-```
-
-# 3.1 We can also choose the best model by means of a stepwise procedure
+## 3. Choosing the best model by means of a stepwise procedure
+### Forward selection
 ```{r}
 null <-  lm( Y ~ 1, data = df )
 full <-  lm( Y ~ ., data = df )
 
-step( null, scope = list(lower = null, upper = full), direction = "forward" )
-step( null, scope = list(lower = null, upper = full), direction = "backward" )
-step( null, scope = list(lower = null, upper = full), direction = "both" )
+step(null, scope = list(lower = null, upper = full), direction = "forward" )
+```
+### Backward elimination
+```{r}
+step(null, scope = list(lower = null, upper = full), direction = "backward" )
 ```
 
-In summary, the smaller RSS is `Y~X1`, so the best porformance of this model is:
+### Or using algorithm
 ```{r}
-best2 <- lm(Y ~ X1, data = df)
-summary(best2)
+step(null, scope = list(lower = null, upper = full), direction = "both" )
 ```
+
+### Conclusion
+In summary, the smallest RSS is `Y~X1`, so the best performance of this model is:
+$$
+\hat{Y} = \beta_0 + \beta_1X_1 + e
+$$
+
+# 4 Visualization – scatterplot matrix
+- We can also see if there is a linear relationship between the independent and dependent variables in scatterplot. According to the plot, `Y` and `X1` does have a linear relationship, but `X2` and `Y` does not. Also, the model may have a multicollinearity problem as `X1` and `X2` appear to have a linear relationship so consider keeping `lm(Y ~ X1)` to run a linear model.
+
+```{r}
+plot(df)
+```
+### Conclusion
+
+$$
+\hat{Y} = \beta_0 + \beta_1X_1 + e
+$$
 
 5. (**9.10–9.11, 9.18, 9.21–9.22**) A personnel officer in a governmental agency administered four newly developed aptitude tests to each of 25 applicants for entry-level clerical positions in the agency. For purpose of the study, all 25 applicants were accepted for positions irrespective of their test scores. After a probationary period, each applicant was rated for proficiency on the job, and scores of the four tests (X1, X2, X3, X4) and the job proficiency score (Y) were recorded.
 ```{r}
-A1 <-  read.table("./data/CH09PR10.txt")
-A2 <-  read.table("./data/CH09PR22.txt")
-A1$Y=V1; A1$X1=V2; A1$X2=V3; A1$X3=V4; A1$X4=V5;
-A1 <-  data.frame(Y,X1,X2,X3,X4)
+A1 <- read_table("./data/CH09PR10.txt", col_names = FALSE)
+A2 <- read_table("./data/CH09PR22.txt", col_names = FALSE)
+A1 %>%
+  rename(Y = X1, X1 = X2, X2 = X3, X3 = X4, X4 = X5) -> A1 # Original Data
+A2 %>%
+  rename(Y = X1, X1 = X2, X2 = X3, X3 = X4, X4 = X5) -> A2 # Additional Data
 ```
 
 The resulting **Job Proficiency** data set is available on our Blackboard in “Data sets” and on the next page of this homework assignment.
 
 (a) Obtain the scatter plot matrix of these data. What do the scatter plots suggest about the nature of the functional relationship between the response variable and each of the predictor variables? Do you notice any serious multicollinearity problems?
 
+- `X1` and `X2` do not appear to have a linear relationship with the response variable `Y`. In contrast, `X3` and `X4` appear to have a linear relationship with the response variable `Y`.
+- The model may have a multicollinearity problem as `X3` and `X4` appear to have a linear relationship.
+```{r}
+plot(A1)
+```
+
+
 (b) Fit the multiple regression function containing all four predictor variables as first-order (linear) terms. Does it appear that all predictor variables should be retained?
+- According to the table, the `X2` variable is not in the significant level. In other words, we fail to reject the null: $\beta2$ = 0 so we consider removing the `X2` variable.
+```{r}
+# Full model for (b)
+mul.reg <- lm( Y ~ ., data = A1)
+summary(mul.reg)
+```
 
-(c) Using only first-order terms for the predictor variables in the pool of potential Xvariables, find the best regression models according to different criteria - adjusted $R^2$, Cp, and BIC.
 
-(d) Using forward stepwise selection, find the best subset of predictor variables to predict job proficiency. Use the α-to-enter limit of 0.05.
+(c) Using only first-order terms for the predictor variables in the pool of potential X variables, find the best regression models according to different criteria - adjusted $R^2$, Cp, and BIC.
 
-(e) Repeat the previous question using the backward elimination method and the α-toremove limit of 0.10.
+# Exhaustive Search
+```{r}
+best <- regsubsets(Y ~ ., data = A1)
+summary(best)
+```
+
+# find out the largest adjusted R squares
+- If the model includes `X1`, `X3`, and `X4`, the adjusted R squares will be the highest: 0.9560482.
+```{r}
+summary(best)$adjr2
+which.max(summary(best)$adjr2)
+```
+
+# find out the smallest Mallows Cp
+- If the model includes `X1`, `X3`, and `X4`, the CP will be the smallest: 3.727399.
+```{r}
+summary(best)$cp
+which.min(summary(best)$cp)
+```
+
+# find out the smallest Bayesian Information Criterion
+- If the model includes X1, X3, and X4, the BIC will be the smallest: -68.57933.
+```{r}
+summary(best)$bic
+which.min(summary(best)$bic)
+```
+
+(d) Using **forward** stepwise selection, find the best subset of predictor variables to predict job proficiency. Use the $\alpha$-to-enter limit of 0.05.
+
+- Forward and backward selection algorithms with partial F-tests at each step.
+```{r}
+library(SignifReg) # significance testing in regression model building
+null <- lm(Y~1, data = A1)
+# summary(null)
+full <- lm(Y~., data = A1)
+
+SignifReg(null, alpha = 0.05, direction = "forward")
+# step(null, scope = list(lower = null, upper = full), direction = "forward", alpha = 0.05)
+```
+
+(e) Repeat the previous question using the backward elimination method and the $\alpha$-to remove limit of 0.10.
+```{r}
+SignifReg(full, alpha = 0.1, direction = "backward")
+```
+
+Compared to `forward` and `backward` two methods, the slope and the value of $b_1$, $b_3$, and $b_4$ are the same. Also, they both also give up the `X2` variable.
 
 (f) To assess and compare internally the predictive ability of our models, split the data into
-training and testing subsets and estimate the mean squared prediction error MSPE for all regression models identified in (b–e).
+training and testing subsets and estimate the mean squared prediction error `MSPE` for all regression models identified in (b–e).
 
-(g) To assess and compare externally the validity of our models, 25 a1dditional applicants for entry level clerical positions were similarly tested and hired. Their data are below, in the table on the right. Use these data as the testing set and estimate MSPE for all regression models identified in (b–e).
+- `A1` is a training data, and `A2` is a testing data
+- After some methods of model selection, we will use `lm(formula = Y ~ X1 + X3 + X4, data = A1)` to run a regression model.
+```{r}
+pd1 <- lm(formula = Y ~ X1 + X3 + X4, data = A1)  # training 
+```
+
+```{r}
+library(cvTools)
+Yhat_pd1 <- predict(pd1, A2) # testing
+MSPE_pd1 <- mspe(A2$Y, Yhat_pd1, includeSE = FALSE)
+MSPE_pd1 
+```
+
+(g) To assess and compare externally the validity of our models, 25 additional applicants for entry level clerical positions were similarly tested and hired. Their data are below, in the table on the right. Use these data as the testing set and estimate MSPE for all regression models identified in (b–e).
+
+- Adding `X2` in the previous model as full model.
+```{r}
+pd2 <- lm(formula = Y ~ ., data = A1) # training 
+Yhat_pd2 <- predict(pd2, A2) # testing
+MSPE_pd2 <- mspe(A2$Y, Yhat_pd2, includeSE = FALSE)
+MSPE_pd2 
+```
+
+- Reference: http://finzi.psych.upenn.edu/library/cvTools/html/cost.html
+

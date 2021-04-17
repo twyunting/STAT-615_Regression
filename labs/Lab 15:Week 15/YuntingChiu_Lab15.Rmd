@@ -1,0 +1,163 @@
+---
+title: "Lab 15"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: blue
+linkcolor: red
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(broom)
+library(leaps)
+```
+
+# Exercise 1 - Polynomial Regression. Predict US population
+a) Load the data USpop.csv and plot Population as a function of Year.
+
+- We can see the curve line in the plot below.
+```{r}
+USpop <- read_csv("./data/USpop.csv")
+USpop
+names(USpop)
+attach(USpop)
+plot(Year, Population)
+```
+
+b) Use a linear model to fit the data. Does a linear model provide a good fit?
+
+- The p-value and R squared is good, maybe the liner model is a good model. However, according to the plot, the model does not provide a good fit. We considered using the polynomial regression model when comparing the regression line and observed data.
+- If n is small, the F-stat should be big in order to reject the null (the F-statistic: 239.3 is large).
+```{r}
+linearModel <- lm(Population~Year)
+summary(linearModel)
+augment(linearModel) %>%
+  ggplot(aes(x = Year, y = Population)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
+```
+
+c) Calculate $R^2$. What do you observe? Does the value of R2 imply that a linear model is a good choice? 
+
+- Although R-squared 0.9193 is excellent, we must constantly compare the independent variable and dependent variable plots (overfitting). Then we'll understand why the linear model isn't the best option.
+
+d) Using the linear model, predict the US population for the year 2030. Is this a good prediction?
+
+- Using linear model to predict `Year` 2030 is not make sense because the `Population` in `Year` 2010 is 308.7 million, but our prediction in `Year` 2030 is only 280.8202 million.
+```{r}
+predict(linearModel, data.frame(Year = 2030))
+USpop %>%
+  tail(1)
+
+```
+
+e) Produce appropriate residual plots and decide whether or not an important predictor has been omitted. What do you observe?
+
+- Residuals vs Fitted plot: strong curve pattern , looks non-linearity
+- Normal Q-Q plot: The shape does not appear to follow a normal distribution, particularly the lower tail.
+- Scale Location: We could say that the data in the middle is homoscedastic, while the data elsewhere is heteroscedastic.
+- Residual vs Leverage: some potential outliers in observation 22 and 23 (high leverage). 
+```{r}
+par(mfrow = c(2, 2))
+plot(linearModel)
+```
+
+f) Fit a quadratic model and plot the fitted curve. Is this a good fit?
+
+- The plot shows that the curve is well fitted. The R-squared also excellent, and each independent variable is significant. 
+```{r}
+quadModel <- lm(Population ~ poly(Year, 2))
+# or: quadModel2 <- lm(Population ~ Year + I(Year^2))
+summary(quadModel)
+par(mfrow = c(1, 1))
+plot(Year, Population)
+Yhat = fitted.values(quadModel)
+lines(Year, Yhat, col = "blue", lwd = 3)
+```
+
+g) Predict the population for the year 2030. Is this a reasonable prediction?
+
+- Compared to linear model: 280.8202 million people, the quadratic model is reasonable.
+```{r}
+predict(quadModel, data.frame(Year = 2030))
+```
+
+
+# Exercise 2 - Regression Diagnostics
+
+a) Load the Auto.rda dataset. Predict mpg using the predictors year, accelerator, horsepower, weight. Generate different residual plots.
+
+- Residuals vs Fitted plot: strong curve pattern , looks non-linearity
+- Normal Q-Q plot: The shape does not follow a normal distribution, especially the higher tail.
+- Scale Location:  The data has a slight homoscedasticity to it.
+- Residual vs Leverage: we focus on some high leverage observations, they may be potential outliers.
+```{r}
+load("./data/Auto.rda")
+attach(Auto)
+
+# model
+reg <- lm(mpg ~ year + acceleration + horsepower + weight)
+par(mfrow = c(2, 2))
+plot(reg)
+```
+
+b) Which of these residuals can be considered as outliers? Compare with the Bonferroni-adjusted quantile from t-distribution.
+```{r}
+t <- rstudent(reg)
+plot(t)
+```
+# Look the summary first
+```{r}
+summary(t)
+```
+```{r}
+t[abs(t) > 3]
+```
+# compute the upper quantile of the t-distribution.
+```{r}
+qt(0.05/2/392, 387) # qt(alpha/ x/ , n-predictors-1)
+```
+# compare the t-student residual vs critical value
+- There is one outlier
+```{r}
+t[abs(t) > abs(qt(0.05/2/392, 387))]
+```
+
+c) Test Normality using Shapiro-Wilk normality test. Also look at the Normal Q-Q plot above. Shapiro- Wilk statistic W measures how close the graph is to a straight line.
+
+- The small p-value indicates that there is non-normality (rejected the null).
+```{r}
+shapiro.test(t)
+```
+
+d) Test HOMOSCEDASTICITY (constant variance) using the Breausch-Pagan test. 
+- A significantly different variance could overshadow the differences between means and lead to incorrect conclusions.
+- HOMOSCEDASTICITY is rejected, meaning that there is evidence of equal variance (Heteroskedasticity).
+```{r}
+library(car)
+ncvTest(reg)
+```
+
+e) Check for INFLUENTIAL DATA
+
+```{r}
+infl <- influence(reg)
+leverage <- infl$hat
+plot(leverage)
+```
+
+```{r}
+5/length(mpg) # average leverage: mean value
+```
+
+```{r}
+summary(infl$hat)
+```
+
+```{r}
+check_leverage <- leverage[leverage > 0.03] # 0.03 is between the third quantile and the max value
+check_leverage
+```
+
