@@ -20,7 +20,9 @@ library(tidyverse)
 value?
 
 - The main point of stepwise regression method is to obtain the best relationship between the independent variables and the dependent variable.
-- Advantage of small $\alpha$ to-enter value: 
+- *Advantage of small $\alpha$ to-enter value*: We would be able to easily add new variables into the regression. However, the current variables may lose their significance if we constantly add new variables in the model, lowering the model's precision.
+
+- *Advantage of larger $\alpha$ to-enter value*: We would not be able to easily add new variables to the regression. It's a good thing that the model's strictly purpose is to determine whether the new variables have a sufficiently large value before incorporating them.
 
 4. (**Continuing 6.27 from an earlier homework**) In a small-scale regression study, the following
 data were obtained,
@@ -54,7 +56,7 @@ summary(df.fit)
 ```
 
 ### 1.1 Find out the largest adjusted R squares
-- Because $R^2$ is not a fair measurement. As the number of parameters increases, so does the $R2$.
+- $R^2$ is not a fair measurement. As the number of parameters increases, so does the $R2$.
 ```{r}
 summary(df.fit)$adjr2
 which.max(summary(df.fit)$adjr2)
@@ -73,7 +75,7 @@ which.min(summary(df.fit)$bic)
 ```
 ### Conclusion
 $$
-\hat{Y} = \beta_0 + \beta_1X_1 + e
+Y = \beta_0 + \beta_1X_1 + e
 $$
 
 ## 2. Sequential Search
@@ -88,7 +90,7 @@ plot(reg.backward, sclae = "bic")
 ### Conclusion
 According to the result above, the best model is
 $$
-\hat{Y} = \beta_0 + \beta_1X_1 + e
+Y = \beta_0 + \beta_1X_1 + e
 $$
 
 ## 3. Choosing the best model by means of a stepwise procedure
@@ -112,11 +114,11 @@ step(null, scope = list(lower = null, upper = full), direction = "both" )
 ### Conclusion
 In summary, the smallest RSS is `Y~X1`, so the best performance of this model is:
 $$
-\hat{Y} = \beta_0 + \beta_1X_1 + e
+Y = \beta_0 + \beta_1X_1 + e
 $$
 
 # 4 Visualization – scatterplot matrix
-- We can also see if there is a linear relationship between the independent and dependent variables in scatterplot. According to the plot, `Y` and `X1` does have a linear relationship, but `X2` and `Y` does not. Also, the model may have a multicollinearity problem as `X1` and `X2` appear to have a linear relationship so consider keeping `lm(Y ~ X1)` to run a linear model.
+- We can also see if there is a linear relationship between the independent and dependent variables in scatterplot. According to the plot, `Y` and `X1` does have a linear relationship, but `X2` and `Y` does not. Also, the model may have a multicollinearity problem as `X1` and `X2` appear to have a linear relationship so consider only keeping `lm(Y ~ X1)` to run a linear model.
 
 ```{r}
 plot(df)
@@ -124,8 +126,20 @@ plot(df)
 ### Conclusion
 
 $$
-\hat{Y} = \beta_0 + \beta_1X_1 + e
+Y = \beta_0 + \beta_1X_1 + e
 $$
+
+### The best regression equation
+
+$$
+\hat{Y} = 20.2361 + 3.4336X_1
+$$
+
+```{r}
+bestModel <- lm(Y ~ X1, data = df)
+summary(bestModel)
+```
+
 
 5. (**9.10–9.11, 9.18, 9.21–9.22**) A personnel officer in a governmental agency administered four newly developed aptitude tests to each of 25 applicants for entry-level clerical positions in the agency. For purpose of the study, all 25 applicants were accepted for positions irrespective of their test scores. After a probationary period, each applicant was rated for proficiency on the job, and scores of the four tests (X1, X2, X3, X4) and the job proficiency score (Y) were recorded.
 ```{r}
