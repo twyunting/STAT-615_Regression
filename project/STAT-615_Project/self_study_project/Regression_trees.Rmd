@@ -1,0 +1,125 @@
+---
+title: "Predicting COVID death determinants"
+author: "Liu Chi Yun, Yunting Chiu"
+date: "2021/4/19"
+output: pdf_document
+---
+
+# Introduction
+
+Here we have Covid-19 dataset included 12 variables and 51 observations. We will use regression trees methods to predict COVID death determinants.
+
+## Covid Data
+```{r message=FALSE}
+library(tidyverse)
+library(rpart)
+library(rpart.plot)
+covid_df_train <- read_csv("./data/covidForRegression.csv")
+covid_df_train
+```
+
+# Decision Trees 
+
+* To Classify: Classification Tree
+* To Predict: Regression Tree
+
+Decision Tree is one of the popular analytic methods. It is a non-parametric regression method. Non-parametric no need to assume the data linearity and normality. Decision Tree can use to build a non-linear model. There are two types of Decision Trees. If the problem we want to determine is having a categorical response variable, and we need to split a response variable into classes, we will use a Classification Tree, which is an algorithm that is able to identify the class of categorical variables. For example, Yes or no, death or alive, male or female. If we want to predict a response variable, which is a continuous response variable, we will use a Regression Tree, which is an algorithm that is the same as regression analysis giving a continuous result. The predicted result will be continuous. For example, people's' height and weight. Here we want to predict COVID death, which is a continuous response variable. In the following, we will build a Regression tree to Predict COVID death.
+
+
+# Regression Trees | Analysiss
+
+
+## Prediciting COVID death case Using Regression Trees
+
+```{r}
+reg.tree <- rpart(deaths ~ ., data = covid_df_train)
+rpart.plot(reg.tree)
+```
+
+
+## Build a training set 
+
+Here  we use covid data to build a regression tree to predic death case.
+
+We randomly split data into 70% of the observations for training the models, and leaving 30% for validation.
+
+```{r}
+# build a training set 
+# ensure reproducibility
+set.seed(100)
+# sample 70% of the row indices for training the models
+train <- sample(1:nrow(covid_df_train), nrow(covid_df_train)*0.7) 
+tree.covid <- rpart(deaths ~ ., subset = train, data = covid_df_train, method = "anova")
+rpart.plot(tree.covid)
+```
+
+```{r}
+summary(tree.covid)
+```
+
+Values on the node represent:
+
+* death cases
+* Percentage of observations account for each node
+
+
+## Print the rules of regression tree 
+```{r}
+rpart.rules(x = tree.covid, cover = TRUE)
+```
+
+`White_alone`is the first layer variable, which is the most important variable. If the state includes the white pepole is greater than `5,800,000`, the average death case is 20,000 people, accounting for 23% of total death cases. In contrast, if the white people is less than `5,800,000`,  the average number of deaths is 4351 people, accounting for 77% of total death cases. The second important independent variable is `Black_or_African_American_alone`. According to the tree plot, if the state includes less than `369,000` people of the black or African American race, the average number of deaths is 2282, accounting for 46 percent of total death cases. Conversely, if the state includes greater than `369,000` people of them, the average number of deaths is 7361, accounting for 31 percent of total death cases.
+
+## Check importance
+
+```{r}
+tree.covid$variable.importance
+```
+
+Variable.importance command can examine variable importance for each predictor variables. Here we can see that the most important variable is White_alone, and the last one is Latitude.
+
+## cross-validation
+
+```{r}
+printcp(tree.covid)
+plotcp(x = tree.covid)
+```
+
+Rpart function, by default, will cross-validate the results of the tree and trim the tree.
+
+The complexity parameter (cp) is used to control the size of the tree and to select the optimal tree size.
+
+Y-axis illustrates the relative cross validation error  for various cp values. Smaller cp values lead to larger trees (we can see the upper x-axis for tree size)
+
+
+If the cost of adding another variable to the tree from the current node is above the value of cp, then tree building does not continue.
+
+Then, we can use this predict function to make prediction. 
+
+## Prediction function 
+```{r}
+# predict testing set
+pred <- predict(tree.covid, covid_df_train[-train,])
+pred
+```
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

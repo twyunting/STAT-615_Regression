@@ -1,0 +1,50 @@
+---
+title: "Regression Trees"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: blue
+linkcolor: red
+---
+
+# Prediciting COVID death case Using Regression Trees
+```{r}
+library(tidyverse)
+library(rpart)
+library(rpart.plot)
+covid_dftmp <- read_csv("../data/covid_df_regression.csv")
+
+covid_dftmp %>% 
+  dplyr::select(confirmed, IncomeTwenty, deaths, Total_Population) -> covid_df
+
+covid_df %>%
+  mutate(IncomeTwenty = IncomeTwenty/1000, 
+         confirmed = confirmed/1000,
+         deaths = deaths/1000,
+         Total_Population = Total_Population/1000) -> covid_df 
+reg.tree <- rpart(deaths ~ IncomeTwenty + confirmed + Total_Population, data = covid_df)
+rpart.plot(reg.tree)
+```
+
+```{r}
+reg.tree$variable.importance
+```
+
+```{r}
+set.seed(1)
+train <- sample(1:nrow(covid_df), nrow(covid_df)/2)
+tree.covid <- rpart(deaths ~ IncomeTwenty + confirmed, subset = train, data = covid_df)
+summary(tree.covid)
+```
+# PLot
+```{r}
+library(rpart.plot)
+rpart.plot(tree.covid)
+```
+
+```{r}
+tree.covid$variable.importance
+```
+
+# Reference:
+- https://rpubs.com/cyobero/regression-tree

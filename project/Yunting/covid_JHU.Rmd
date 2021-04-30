@@ -1,0 +1,242 @@
+---
+title: 'COVID19 Confirmed vs Deaths'
+subtitle: "Web Scraping Data from Johns Hopkins University"
+author: "Yunting Chiu"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    number_sections: yes
+    theme: cerulean
+  pdf_document: default
+urlcolor: blue
+linkcolor: red
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.align  = "center",
+                      fig.height = 5, 
+                      fig.width  = 6)
+```
+
+
+# Web Scrapping Covid Data
+- The data source is from [Johns Hopkins University](https://github.com/CSSEGISandData)
+- "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series"
+- If you instead download the file using the github.com link, you will actually be downloading a web page with buttons and comments and which displays your desired content in the middle. It's what you want to give to your web browser to get a nice page to look at but not to download.
+```{r}
+# Installed library
+library(tidyverse)
+url_in <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/"
+
+```
+
+# Extract four datasets
+    + time_series_covid19_confirmed_global.csv
+    + time_series_covid19_deaths_global.csv
+    + time_series_covid19_confirmed_US.csv
+    + time_series_covid19_deaths_US.csv
+```{r}
+df <- tibble(file_names = c("time_series_covid19_confirmed_global.csv",
+                            "time_series_covid19_deaths_global.csv",
+                            "time_series_covid19_confirmed_US.csv",
+                            "time_series_covid19_deaths_US.csv")) -> df
+```
+
+# Mapping Data
+```{r}
+df %>%
+  mutate(url = str_c(url_in, file_names, sep = "")) -> df
+```
+```{r}
+df %>%
+  mutate(data = map(url, ~read_csv(., na = ""))) -> df
+```
+```{r}
+df %>%
+  mutate(case_types = as.factor(str_extract(file_names, "[:alpha:]*_[gU][:alpha:]*"))) -> 
+  df
+# alpha = Any letter, [A-Za-z]
+# reference: https://www.petefreitag.com/cheatsheets/regex/character-classes/
+```
+```{r}
+df %>%
+  dplyr::select(case_types, data) -> df
+```
+
+# Clean Data  
+```{r}
+df %>%
+  mutate(vars = map(df$data, names)) -> df
+# map(df$vars, ~unlist(.)[1:15]) for checking
+
+fix_names <- function(df, pattern, rePattern){
+  stopifnot(is.data.frame(df), is.character(pattern), is.character(rePattern))
+  names(df) <- str_replace_all(names(df), pattern, rePattern)
+  return(df)
+}
+
+df %>%
+  mutate(data = map(data, ~fix_names(., "([ey])/", "\\1_")),
+         data = map(data, ~fix_names(., "Admin2", "County")),
+         data = map(data, ~fix_names(., "Long_", "Long")),
+         data = map_if(data, str_detect(df$case_types, "US"),
+                   ~select(., -c("UID", "iso2", "iso3", 
+                                 "code3", "FIPS", "Combined_Key"))),
+         data = map_if(data, str_detect(df$case_types, "global"),
+                      ~mutate(., County = "NA")),
+         data = map_if(data, !str_detect(df$case_types, "deaths_US"),
+                      ~mutate(., Population = 0)),
+         data = map(data, ~unite(., "Country_State", 
+                                 c("Country_Region", "Province_State"),
+                                 remove = FALSE, na.rm = TRUE,
+                                 sep = "_"))
+         ) -> df
+
+df %>%
+  mutate(vars = map(df$data, names)) -> df # synchronize the vars correspondingly
+# map(df$vars, ~unlist(.)) # for checking 
+```
+
+# Tidy each dataframe 
+
+```{r}
+library(lubridate)
+df %>%
+  mutate(data = map(data, ~pivot_longer(data = ., cols = contains("/"),
+                                        names_to = "Date",
+                                        values_to = "dailyValues",
+                                        names_transform = list(Date = mdy)))
+         ) -> df
+# df$data <- map(df$data, names) # synchronize the vars correspondingly
+# map(df$vars, ~unlist(.)) # for checking 
+
+# crate a function to fix in type of Date
+mdyDate <- function(df, varsDate){
+  # stopifnot(is.data.frame(df), is.character(varsDate))
+  df[[varsDate]] <- ymd(df[[varsDate]])
+  return(df)
+}
+
+df %>%
+  mutate(data = map(data, ~mdyDate(., "Date"))) -> df_long
+
+# str(df_long) # check the data set
+```
+
+# Add Continents 
+```{r, warning = FALSE}
+library(countrycode) # get the continents
+df_long %>%
+  mutate(data = map(data, ~mutate(., Continent = countrycode(Country_Region,
+                                               origin = "country.name",
+                                               destination = "continent")))
+         ) -> df_long
+```
+
+# Fix NAs for Continents
+```{r}
+df_long %>%
+  mutate(data = map(data, ~mutate(., Continent = case_when(
+                                               Country_Region == "Diamond Princess" ~ "Asia",
+                                               Country_Region == "Kosovo" ~ "Americas",
+                                               Country_Region == "MS Zaandam" ~ "Europe",
+                                               TRUE ~ Continent)
+                                  ))) -> df_long
+
+map(df_long$data, ~unique(.$Continent))
+```
+
+# Unnest the Data Frames    
+```{r}
+# 1
+df_long %>%
+  unnest(cols = data) %>%
+  ungroup() -> df_all
+
+# 2
+remove(df, df_long)
+
+# 3
+df_all %>%
+  select(-vars) -> df_all
+```
+
+# Get World Population Data
+- source: [UN source](https://population.un.org/wpp/Download/Standard/CSV/)
+```{r}
+# 1
+df_pop <- read_csv("./data/WPP2019_TotalPopulation.csv")
+# summarize(df_pop, across(everything(), ~sum(is.na(.)))) # check NAs
+
+# 2 
+semi_join(df_pop, df_all, by = c("Location" = "Country_Region")) -> df_pop
+
+# 3
+df_pop %>% 
+  mutate(rank_p = rank(-PopTotal, na.last = TRUE),
+         rank_d = rank(-PopDensity, na.last = TRUE),
+         PopTotal = (PopTotal*1000)) -> df_pop
+```
+
+# Add Population Data to `df_all`
+```{r}
+df_all %>%
+  inner_join(df_pop, by = c("Country_Region" = "Location")) -> df_all
+
+df_all 
+```
+
+# We only focus on 2020/01/22 - 2021/01/22 
+```{r}
+# extract one year
+df_all %>%
+  filter(case_types == "confirmed_US" & as_date(Date) <= as_date("2021-01-22") | case_types == "deaths_US" & as_date(Date) <= as_date("2021-01-22")) -> covid
+```
+
+# find out each US state using usmap
+```{r}
+library(usmap)
+state_map <- us_map(regions = "states")
+state_map %>%
+  distinct(full) %>%
+  rename("Province_State" = "full") -> USstates
+```
+# Obtain the number of confirmed cases for each state
+```{r}
+covid %>%
+  filter(case_types == "confirmed_US" & as_date(Date) == as_date("2021-01-22")) %>%
+  select(Province_State, County, dailyValues) %>%
+  group_by(Province_State) %>%
+  tally(dailyValues) %>%
+  right_join(USstates) %>%
+  rename("confirmed" = "n") -> confirmed
+```
+# Obtain the number of death cases for each state
+```{r}
+covid %>%
+  filter(case_types == "deaths_US" & as_date(Date) == as_date("2021-01-22")) %>%
+  select(Province_State, County, dailyValues) %>%
+  group_by(Province_State) %>%
+  tally(dailyValues) %>%
+  right_join(USstates) %>%
+  rename("deaths" = "n") -> deathes
+
+full_join(confirmed, deathes) -> covidForRegression
+```
+
+# Example of simple linear regression model
+```{r}
+reg <- lm(deaths ~ confirmed, data = covidForRegression)
+summary(reg)
+
+covidForRegression %>%
+  ggplot(aes(x = confirmed, y = deaths)) +
+  geom_smooth(method = lm) +
+  geom_point()
+```
+
+# save the dataframe to a local drive
+```{r}
+#covid %>%
+  #write_excel_csv("covidJHU.csv")
+```
