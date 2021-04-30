@@ -168,6 +168,7 @@ plot(A1)
 # Full model for (b)
 mul.reg <- lm( Y ~ ., data = A1)
 summary(mul.reg)
+anova(mul.reg)
 ```
 
 
