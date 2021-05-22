@@ -1,9 +1,11 @@
 ---
-title: "Homework #4"
+title: 'Homework #4'
 author: "Yunting Chiu"
-date: "`r Sys.Date()`"
-output: pdf_document
-urlcolor: "blue"
+date: '2021-02-23'
+output:
+  html_document:
+    df_print: paged
+urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}
@@ -15,6 +17,7 @@ versus H1 : $\beta1$ = 0. The P-value of the test was 0.033, and the analyst con
 Was the $\alpha$ level used by the analyst greater than or smaller than 0.033? If the $\alpha$ level had been 0.01, what would have been the appropriate conclusion?
 
 **An F-statistic greater than the critical value is equivalent to a p-value less than alpha and both mean that we can reject the null hypothesis.** With the small p-value 0.033, we have evidence to reject the null, meaning that $\alpha$ > 0.033. Plus, 0.033 is greater than 0.01, so we also can reject the null at $\alpha$ = 0.01.\
+
 Reference: https://stats.stackexchange.com/questions/50727/f-statistic-f-critical-value-and-p-value
 
 2. **(2.18)** For conducting statistical tests concerning the parameter $\beta1$, why is the t-test more

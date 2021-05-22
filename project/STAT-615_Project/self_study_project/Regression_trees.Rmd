@@ -2,7 +2,9 @@
 title: "Predicting COVID death determinants"
 author: "Liu Chi Yun, Yunting Chiu"
 date: "2021/4/19"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 # Introduction

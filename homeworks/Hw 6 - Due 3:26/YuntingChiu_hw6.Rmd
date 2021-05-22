@@ -1,8 +1,10 @@
 ---
 title: "Homework 6"
 author: "Yunting Chiu"
-date: "`r Sys.Date()`"
-output: pdf_document
+date: '2021-03-25'
+output:
+  html_document:
+    df_print: paged
 urlcolor: blue
 linkcolor: red
 ---

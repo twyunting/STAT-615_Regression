@@ -1,8 +1,10 @@
 ---
 title: "Homework 7"
 author: "Yunting Chiu"
-date: "`r Sys.Date()`"
-output: pdf_document
+date: '2021-04-09'
+output:
+  html_document:
+    df_print: paged
 urlcolor: blue
 linkcolor: red
 ---
@@ -33,6 +35,7 @@ $$
 - SSR(X2|X1) calculates the decrease in SSE when X2 is added to the regression model, given X1 is already present.
 
 Reference:
+
 - https://365datascience.com/tutorials/statistics-tutorials/sum-squares/
 - https://www.stat.colostate.edu/~riczw/teach/STAT540_F15/Lecture/lec09.pdf
 
@@ -51,6 +54,7 @@ $$
 4. (**7.28b, Stat-615 only**) Show that SSReg(X1, X2, X3, X4) = SSReg(X2, X3)+SSReg(X1|X2, X3)+SSReg(X4 | X1, X2, X3)
 
 Reference: 
+
 - https://www.stat.colostate.edu/~riczw/teach/STAT540_F15/Lecture/lec09.pdf
 - https://www.math.arizona.edu/~piegorsch/571A/STAT571A.Ch07.pdf
 

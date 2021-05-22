@@ -1,9 +1,11 @@
 ---
-title: "Homework #1"
+title: 'Homework #1'
 author: "Yunting Chiu"
-date: "`r Sys.Date()`"
-output: pdf_document
-urlcolor: "blue"
+date: "01/29/2021"
+output:
+  html_document:
+    df_print: paged
+urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}

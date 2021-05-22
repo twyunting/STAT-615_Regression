@@ -1,9 +1,11 @@
 ---
-title: "Homework #2"
+title: 'Homework #2'
 author: "Yunting Chiu"
-date: "`r Sys.Date()`"
-output: pdf_document
-urlcolor: "blue"
+date: "02/05/2021"
+output:
+  html_document:
+    df_print: paged
+urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}
@@ -11,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-1. (**1.2**) The members of a health spa pay annual membership dues of $\$$300 plus a charge of $\$$2 for each visit to the spa. Let Y denote the dollar cost for the year for a member and X the number of visits by the member during the year. Express the relation between X and Y mathematically. Is it a functional relation or a statistical relation (that is, is the relation deterministic or stochastic)?
+1. (**1.2**) The members of a health spa pay annual membership dues of $\$300$ plus a charge of $\$2$ for each visit to the spa. Let Y denote the dollar cost for the year for a member and X the number of visits by the member during the year. Express the relation between X and Y mathematically. Is it a functional relation or a statistical relation (that is, is the relation deterministic or stochastic)?
 
 - deterministic: the output of the model is entirely determined by the values of the parameters and the initial conditions; stochastic: random, unpredictable.
 - The association between X and Y is: Y = 300 + 2X (dollars).\
